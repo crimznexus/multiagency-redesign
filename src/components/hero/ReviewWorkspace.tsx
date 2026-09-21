@@ -57,6 +57,7 @@ export function ReviewWorkspace() {
   }
 
   const layout = useMeasuredLayout(stageRef, windowRef, phase, index)
+  useWarmNoteFont(phase)
   const baseId = useId()
 
   return (
@@ -101,7 +102,9 @@ export function ReviewWorkspace() {
           </div>
         </div>
 
-        <HumanLayer phase={phase} layout={layout} scene={scene} />
+        {/* Only once the example is in play: otherwise the comment would flash for a frame at
+            hydration and pull its (below-the-fold) font onto the critical path. */}
+        <HumanLayer phase={phase} layout={inView || held || reduceMotion ? layout : null} scene={scene} />
       </figure>
 
       <SceneTabs
@@ -113,6 +116,20 @@ export function ReviewWorkspace() {
       />
     </div>
   )
+}
+
+/**
+ * The reviewer's comment uses Newsreader, which is kept off the critical path.
+ * Fetch it when the AI starts drafting — after first paint, and ~3 s before
+ * the first comment needs it.
+ */
+function useWarmNoteFont(phase: Phase) {
+  const warmed = useRef(false)
+  useEffect(() => {
+    if (warmed.current || phase !== 'drafting') return
+    warmed.current = true
+    document.fonts.load('italic 400 1em "Newsreader Variable"').catch(() => {})
+  }, [phase])
 }
 
 function describe(scene: Scene) {

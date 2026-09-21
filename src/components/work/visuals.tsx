@@ -27,6 +27,7 @@ export function BrowserFrame({ image, alt, url }: { image: string; alt: string; 
           height={750}
           loading="lazy"
           decoding="async"
+          fetchPriority="low"
           className="block aspect-[16/10] h-auto w-full"
         />
       </picture>

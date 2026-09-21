@@ -3,7 +3,13 @@ import { type FeaturedProject, featured, type OtherProject, others } from './wor
 
 export function SelectedWork() {
   return (
-    <section id="work" aria-labelledby="work-title" className="scroll-mt-6 border-t border-rule">
+    <section
+      id="work"
+      aria-labelledby="work-title"
+      // Below the fold: skip rendering (and its font/image requests) until it's near the viewport.
+      // `auto` remembers the real height once rendered, so the scrollbar doesn't jump.
+      className="scroll-mt-6 border-t border-rule [contain-intrinsic-size:auto_2400px] [content-visibility:auto]"
+    >
       <div className="page py-[clamp(4rem,9vw,8rem)]">
         <header className="max-w-2xl">
           <p className="label">01 · Selected work</p>

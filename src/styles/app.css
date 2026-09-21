@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @import "@fontsource-variable/schibsted-grotesk/wght.css";
-@import "@fontsource-variable/newsreader/opsz-italic.css";
+/* Weight axis only: the opsz axis doubles the file (147 → 64 KB) for no visible gain at note sizes. */
+@import "@fontsource-variable/newsreader/wght-italic.css";
 @import "@fontsource-variable/geist-mono/wght.css";
 
 /*
