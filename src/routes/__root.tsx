@@ -1,3 +1,5 @@
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url'
+import schibstedLatin from '@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2?url'
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import { LazyMotion, MotionConfig } from 'motion/react'
 import type { ReactNode } from 'react'
@@ -22,7 +24,12 @@ export const Route = createRootRoute({
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
-    links: [{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    links: [
+      // The two faces above the fold; preloading lets them beat first paint on most connections.
+      { rel: 'preload', href: schibstedLatin, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
+      { rel: 'preload', href: geistMonoLatin, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+    ],
   }),
   component: RootComponent,
 })

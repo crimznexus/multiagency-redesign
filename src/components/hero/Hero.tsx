@@ -38,7 +38,7 @@ export function Hero({ ledger }: { ledger: LedgerResult }) {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-[46ch] text-lede text-graphite">
+            <p className="mt-6 max-w-[28em] text-lede text-graphite">
               We build <strong className="font-medium text-ink">products, automations and content</strong> with a
               network of vetted specialists. AI does the first draft; a named person reviews every piece of work before
               it reaches you.

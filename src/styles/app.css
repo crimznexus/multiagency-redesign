@@ -5,6 +5,41 @@
 @import "@fontsource-variable/geist-mono/wght.css";
 
 /*
+ * Metric-matched fallbacks. Until the web fonts arrive, text is set in a local
+ * font scaled to take the same space (average glyph width weighted by English
+ * letter frequency; ascent/descent from the real font), so the swap barely
+ * reflows the page. Arial ≡ Liberation Sans on Linux; Courier New ≡ Liberation Mono.
+ * Values computed from the fonts' TTFs at the weights this page uses.
+ */
+@font-face {
+  font-family: "Schibsted Grotesk Fallback";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans");
+  font-weight: 100 549;
+  size-adjust: 105.47%;
+  ascent-override: 92.6%;
+  descent-override: 24.45%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Schibsted Grotesk Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold");
+  font-weight: 550 900;
+  /* Calibrated against the headline's rendered width (+0.54% over the frequency average). */
+  size-adjust: 101.07%;
+  ascent-override: 96.63%;
+  descent-override: 25.51%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Courier New"), local("CourierNewPSMT"), local("Liberation Mono");
+  size-adjust: 99.98%;
+  ascent-override: 100.52%;
+  descent-override: 29.5%;
+  line-gap-override: 0%;
+}
+
+/*
  * Design tokens.
  *
  * Two layers:
@@ -38,9 +73,9 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --font-sans: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Schibsted Grotesk Variable", "Schibsted Grotesk Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-note: "Newsreader Variable", ui-serif, Georgia, serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  --font-mono: "Geist Mono Variable", "Geist Mono Fallback", ui-monospace, monospace;
 
   /* Fluid type — rem-based so it respects the user's font size. */
   --text-display: clamp(2.5rem, 1.9rem + 2.53vw, 4.25rem);
