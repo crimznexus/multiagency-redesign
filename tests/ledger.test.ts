@@ -40,7 +40,7 @@ describe('summarize', () => {
       ],
       2,
     )
-    expect(summary.since?.toISOString()).toBe('2026-06-15T12:00:00.000Z')
+    expect(summary.since).toBe('2026-06-15T12:00:00.000Z')
     expect(summary.latest.map((p) => p.id)).toEqual([3, 2])
   })
 

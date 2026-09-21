@@ -1,7 +1,9 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
-import { MotionConfig } from 'motion/react'
+import { LazyMotion, MotionConfig } from 'motion/react'
 import type { ReactNode } from 'react'
-import appCss from '~/styles/app.css?url'
+import '~/styles/app.css'
+
+const loadMotionFeatures = () => import('~/lib/motion-features').then((mod) => mod.default)
 
 const title = 'MultiAgency — a human-led, AI-native agency'
 const description =
@@ -20,10 +22,7 @@ export const Route = createRootRoute({
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
-    ],
+    links: [{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
   }),
   component: RootComponent,
 })
@@ -31,10 +30,12 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      {/* Every Motion animation honours the OS "reduce motion" setting. */}
-      <MotionConfig reducedMotion="user">
-        <Outlet />
-      </MotionConfig>
+      {/* Only the animation features we use (no layout/drag); all honour "reduce motion". */}
+      <LazyMotion features={loadMotionFeatures} strict>
+        <MotionConfig reducedMotion="user">
+          <Outlet />
+        </MotionConfig>
+      </LazyMotion>
     </RootDocument>
   )
 }

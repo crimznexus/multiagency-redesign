@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react'
-import { ledgerSnapshot } from '~/data/ledger-snapshot'
-import { fetchLedgerSummary, type LedgerSummary } from './ledger'
+import type { LedgerResult } from '~/server/ledger'
 
 /**
- * The public payment ledger, live when the network allows it. Starts from the
- * build-time snapshot (so prerendered HTML already has real figures) and swaps
- * in fresh numbers after hydration. Failures keep the snapshot silently.
+ * Ledger figures for the page. Starts from what the route loader baked into
+ * the HTML at build time, then refreshes from our own `/api/ledger` (same
+ * origin, CDN-cached) after hydration. Only live results replace what's shown.
  */
-export function useLedger(): LedgerSummary & { live: boolean } {
-  const [state, setState] = useState({ ...ledgerSnapshot, live: false })
+export function useLedger(initial: LedgerResult): LedgerResult {
+  const [ledger, setLedger] = useState(initial)
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchLedgerSummary(controller.signal)
-      .then((summary) => setState({ ...summary, live: true }))
+    fetch('/api/ledger', { signal: controller.signal })
+      .then((res) => (res.ok ? (res.json() as Promise<LedgerResult>) : null))
+      .then((fresh) => fresh?.live && setLedger(fresh))
       .catch(() => {})
     return () => controller.abort()
   }, [])
 
-  return state
+  return ledger
 }

@@ -1,12 +1,22 @@
 /**
  * MultiAgency pays contributors through proposals on a public on-chain
- * treasury. This module reads that record directly from a public NEAR RPC
- * endpoint (CORS-open, no key) and reduces it to the few figures the landing
- * page shows. Amounts are kept in the data but the page shows counts only.
+ * treasury. This module reads that record from a NEAR RPC endpoint and
+ * reduces it to the few figures the landing page shows. Amounts are kept in
+ * the data, but the page shows counts only.
+ *
+ * Runs on the server only (see `src/server/ledger.ts`): public RPCs rate-limit
+ * aggressively and their 429s carry no CORS headers, so browsers never call
+ * them directly.
  */
 
 export const TREASURY_ACCOUNT = 'multiagency.sputnik-dao.near'
-export const RPC_URL = 'https://rpc.mainnet.near.org'
+
+/** Tried in order. The official endpoint is last: it rate-limits hardest. */
+export const RPC_PROVIDERS = [
+  'https://free.rpc.fastnear.com',
+  'https://rpc.mainnet.fastnear.com',
+  'https://rpc.mainnet.near.org',
+] as const
 
 type ProposalStatus = 'Approved' | 'Rejected' | 'InProgress' | 'Removed' | 'Expired' | 'Moved' | 'Failed'
 
@@ -24,13 +34,15 @@ export interface Payment {
   recipient: string
   /** yoctoNEAR, kept as a string to avoid precision loss */
   amount: string
-  paidAt: Date
+  /** ISO 8601 */
+  paidAt: string
 }
 
 export interface LedgerSummary {
   payments: number
   contributors: number
-  since: Date | null
+  /** ISO 8601 date of the first payment */
+  since: string | null
   latest: Payment[]
 }
 
@@ -47,12 +59,12 @@ export function summarize(proposals: RawProposal[], latestCount = 5): LedgerSumm
               id: p.id,
               recipient: p.kind.Transfer.receiver_id,
               amount: p.kind.Transfer.amount,
-              paidAt: new Date(Number(BigInt(p.submission_time) / 1_000_000n)),
+              paidAt: new Date(Number(BigInt(p.submission_time) / 1_000_000n)).toISOString(),
             },
           ]
         : [],
     )
-    .sort((a, b) => b.paidAt.getTime() - a.paidAt.getTime())
+    .sort((a, b) => b.paidAt.localeCompare(a.paidAt))
 
   return {
     payments: payments.length,
@@ -62,8 +74,8 @@ export function summarize(proposals: RawProposal[], latestCount = 5): LedgerSumm
   }
 }
 
-async function view<T>(method: string, args: object, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(RPC_URL, {
+async function view<T>(rpcUrl: string, method: string, args: object, signal?: AbortSignal): Promise<T> {
+  const res = await fetch(rpcUrl, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     signal,
@@ -86,13 +98,13 @@ async function view<T>(method: string, args: object, signal?: AbortSignal): Prom
   return JSON.parse(new TextDecoder().decode(new Uint8Array(body.result.result))) as T
 }
 
-/** Fetch every proposal (paged) and summarize. */
-export async function fetchLedgerSummary(signal?: AbortSignal): Promise<LedgerSummary> {
-  const total = await view<number>('get_last_proposal_id', {}, signal)
+/** Fetch every proposal (paged) from one RPC endpoint and summarize. */
+export async function fetchLedgerSummary(rpcUrl: string, signal?: AbortSignal): Promise<LedgerSummary> {
+  const total = await view<number>(rpcUrl, 'get_last_proposal_id', {}, signal)
   const pageSize = 50
   const pages = await Promise.all(
     Array.from({ length: Math.ceil(total / pageSize) }, (_, i) =>
-      view<RawProposal[]>('get_proposals', { from_index: i * pageSize, limit: pageSize }, signal),
+      view<RawProposal[]>(rpcUrl, 'get_proposals', { from_index: i * pageSize, limit: pageSize }, signal),
     ),
   )
   return summarize(pages.flat())

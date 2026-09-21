@@ -8,12 +8,8 @@ test('home renders the headline', async ({ page }) => {
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
-  // The review workspace's visuals are aria-hidden and mid-animation here (a fading line
-  // briefly fails contrast); they're audited in their settled state by the reduced-motion test.
-  const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-    .exclude('[data-animated]')
-    .analyze()
+  // Scanned mid-animation on purpose: nothing in the workspace fades text, so every frame must pass.
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()
   expect(results.violations).toEqual([])
 })
 
@@ -34,6 +30,14 @@ test.describe('review workspace', () => {
     await expect(tabs.nth(1)).toBeFocused()
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
     await expect(page.getByRole('figure')).toHaveAccessibleName(/Ping · onramp checkout/)
+  })
+
+  test('clicking an example plays it rather than freezing it', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('tab').nth(2).click()
+    await page.mouse.move(0, 0) // off the workspace, so hover doesn't hold it
+    await expect(page.getByText('AI drafting', { exact: true })).toBeVisible()
+    await expect(page.getByText('In review', { exact: true })).toBeVisible({ timeout: 4000 })
   })
 
   test('reduced motion shows the finished, approved example without animating', async ({ browser }) => {

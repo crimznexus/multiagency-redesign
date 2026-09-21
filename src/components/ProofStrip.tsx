@@ -1,9 +1,10 @@
 import { useLedger } from '~/lib/use-ledger'
+import type { LedgerResult } from '~/server/ledger'
 
 export const ACTIVE_PROJECTS = 5
 
-export function ProofStrip() {
-  const { payments, contributors, live } = useLedger()
+export function ProofStrip({ ledger }: { ledger: LedgerResult }) {
+  const { payments, contributors, live } = useLedger(ledger)
   const items = [
     { value: ACTIVE_PROJECTS, label: ['active', 'projects'] },
     { value: contributors, label: ['contributors', 'paid'] },

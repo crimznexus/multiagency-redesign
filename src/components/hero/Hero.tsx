@@ -1,8 +1,9 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
+import type { LedgerResult } from '~/server/ledger'
 import { ProofStrip } from '../ProofStrip'
 import { ReviewWorkspace } from './ReviewWorkspace'
 
-export function Hero() {
+export function Hero({ ledger }: { ledger: LedgerResult }) {
   return (
     <section aria-labelledby="hero-title" className="pt-[clamp(2.5rem,6vw,5rem)]">
       <div className="page">
@@ -24,7 +25,7 @@ export function Hero() {
                   aria-hidden="true"
                   className="absolute -bottom-[0.14em] -left-[2%] h-[0.22em] w-[104%] overflow-visible"
                 >
-                  <motion.path
+                  <m.path
                     d="M3 8 C 40 3, 90 3, 130 6 S 185 9, 197 4"
                     className="fill-none stroke-pencil"
                     strokeWidth={3}
@@ -62,7 +63,7 @@ export function Hero() {
           <ReviewWorkspace />
         </div>
 
-        <ProofStrip />
+        <ProofStrip ledger={ledger} />
       </div>
     </section>
   )

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useInView, useReducedMotion } from 'motion/react'
 import {
   type KeyboardEvent,
   type RefObject,
@@ -93,7 +93,7 @@ export function ReviewWorkspace() {
         >
           <WindowBar scene={scene} />
           <Steps phase={phase} />
-          <div className="grid sm:h-[352px] sm:grid-cols-2">
+          <div className="grid sm:h-[384px] sm:grid-cols-2">
             <DraftDoc scene={scene} phase={phase} linesShown={linesShown} />
             <div className="hidden border-l border-rule-soft sm:block">
               <Preview scene={scene} phase={phase} />
@@ -107,7 +107,7 @@ export function ReviewWorkspace() {
       <SceneTabs
         index={index}
         onSelect={select}
-        onFocusChange={(focused) => (focused ? setHeld(true) : release())}
+        onFocusChange={(focused) => (focused ? setHeld(true) : held && release())}
         progressKey={playing ? `${index}:${run}` : null}
         controls={`${baseId}-example`}
       />
@@ -198,11 +198,13 @@ function DraftDoc({ scene, phase, linesShown }: { scene: Scene; phase: Phase; li
       </div>
       <div className="grid gap-2.5">
         {scene.lines.map((line, i) => (
-          <motion.div
+          // Lines are "written in" with a wipe, not faded: text is never translucent,
+          // so it never dips below contrast mid-animation.
+          <m.div
             key={`${scene.id}:${line.tag}:${isEdited(line) ? line.draft : line.text}`}
             data-target={isEdited(line) || undefined}
             initial={false}
-            animate={{ opacity: i < linesShown ? 1 : 0, y: i < linesShown ? 0 : 4 }}
+            animate={{ clipPath: i < linesShown ? 'inset(0% 0% 0% 0%)' : 'inset(0% 100% 0% 0%)' }}
             transition={{ duration: 0.35, ease }}
             className={`grid grid-cols-[44px_minmax(0,1fr)] gap-2.5 rounded-[3px] text-[14.5px] leading-normal transition-colors duration-500 ${
               isEdited(line) && reached(phase, 'struck')
@@ -215,21 +217,12 @@ function DraftDoc({ scene, phase, linesShown }: { scene: Scene; phase: Phase; li
               <span>
                 {line.keep && `${line.keep} `}
                 <del className="mark-del">{line.draft}</del>
-                {reached(phase, 'revised') && (
-                  <motion.ins
-                    className="mark-ins"
-                    initial={{ opacity: 0, y: 3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, ease }}
-                  >
-                    {line.revised}
-                  </motion.ins>
-                )}
+                {reached(phase, 'revised') && <ins className="mark-ins">{line.revised}</ins>}
               </span>
             ) : (
               <span>{line.text}</span>
             )}
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </div>
@@ -243,15 +236,15 @@ function HumanLayer({ phase, layout, scene }: { phase: Phase; layout: Layout | n
   return (
     <div aria-hidden data-animated>
       {layout && (
-        <motion.div
-          className="pointer-events-none absolute top-0 left-0 z-10"
+        <m.div
+          className="pointer-events-none absolute top-0 left-0 z-10 origin-top-left"
           initial={false}
           animate={{
             x: cursorOn ? layout.cursorTo.x : layout.cursorFrom.x,
             y: cursorOn ? layout.cursorTo.y : layout.cursorFrom.y,
-            opacity: cursorOn ? 1 : 0,
+            scale: cursorOn ? 1 : 0,
           }}
-          transition={{ duration: 0.9, ease, opacity: { duration: 0.3 } }}
+          transition={{ duration: 0.9, ease, scale: { duration: 0.25 } }}
         >
           <svg viewBox="0 0 18 18" className="size-[18px] drop-shadow-sm" aria-hidden="true">
             <path
@@ -264,18 +257,20 @@ function HumanLayer({ phase, layout, scene }: { phase: Phase; layout: Layout | n
           <span className="absolute top-4 left-3.5 rounded-[3px_8px_8px_8px] bg-pencil-deep px-[7px] py-[5px] font-mono text-[11px] leading-none whitespace-nowrap text-white">
             Lead reviewer
           </span>
-        </motion.div>
+        </m.div>
       )}
 
-      <AnimatePresence>
+      {/* initial={false}: whatever the server rendered is already on screen, so don't re-animate it on hydration */}
+      <AnimatePresence initial={false}>
         {layout && reached(phase, 'commented') && (
-          <motion.div
+          <m.div
             key={scene.id}
             className="absolute z-[5] rounded-md border border-l-[3px] border-rule border-l-pencil bg-card px-3.5 py-3 shadow-window"
             style={{ left: layout.comment.x, width: layout.comment.width }}
-            initial={instant ? false : { opacity: 0, y: 8, scale: 0.98, top: layout.comment.y }}
-            animate={{ opacity: 1, y: 0, scale: 1, top: layout.comment.y }}
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            // Unfolds downward; the negative inset leaves room for the shadow.
+            initial={instant ? false : { clipPath: 'inset(-48px -48px 100% -48px)', y: -4, top: layout.comment.y }}
+            animate={{ clipPath: 'inset(-48px -48px -48px -48px)', y: 0, top: layout.comment.y }}
+            exit={{ clipPath: 'inset(-48px -48px 100% -48px)', transition: { duration: 0.15 } }}
             transition={{ duration: 0.35, ease }}
           >
             <div className="flex items-center gap-2">
@@ -286,25 +281,26 @@ function HumanLayer({ phase, layout, scene }: { phase: Phase; layout: Layout | n
               <span className="ml-auto font-mono text-[11px] text-struck">now</span>
             </div>
             <p className="mt-2 font-note text-note text-pencil-deep italic">“{scene.comment}”</p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
+      {/* initial={false}: whatever the server rendered is already on screen, so don't re-animate it on hydration */}
+      <AnimatePresence initial={false}>
         {phase === 'approved' && (
-          <motion.div
+          <m.div
             key={scene.id}
-            className="absolute top-0.5 right-0.5 z-20 flex items-center gap-2 rounded-md border-[1.5px] border-pencil bg-card py-2 pr-3 pl-2.5 font-mono text-[12.5px] leading-none text-pencil-deep sm:top-3 sm:-right-1.5"
-            initial={instant ? false : { opacity: 0, scale: 1.15, rotate: -3 }}
-            animate={{ opacity: 1, scale: 1, rotate: -3 }}
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+            className="absolute top-0.5 right-0.5 z-20 flex origin-top-right items-center gap-2 rounded-md border-[1.5px] border-pencil bg-card py-2 pr-3 pl-2.5 font-mono text-[12.5px] leading-none text-pencil-deep sm:top-3 sm:-right-1.5"
+            initial={instant ? false : { scale: 1.4, rotate: -3 }}
+            animate={{ scale: 1, rotate: -3 }}
+            exit={{ scale: 0, transition: { duration: 0.12 } }}
+            transition={{ type: 'spring', stiffness: 520, damping: 20 }}
           >
             <svg viewBox="0 0 14 14" className="size-3.5" aria-hidden="true">
               <path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" />
             </svg>
             {scene.stamp}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -357,7 +353,11 @@ function useMeasuredLayout(
     setLayout({
       cursorFrom: { x: w.left + (w.right - w.left) * 0.85, y: w.bottom + 30 },
       cursorTo: { x: d.left + 20, y: d.top + 6 },
-      comment: { x: Math.max(8, tx.left), y: t.bottom + 10, width: Math.min(280, docRight - tx.left + 24) },
+      comment: {
+        x: Math.max(8, tx.left),
+        y: t.bottom + 10,
+        width: Math.min(280, docRight - tx.left + 24, s.width - tx.left - 4),
+      },
     })
   }, [phase, index, size, stageRef, windowRef])
 
@@ -393,7 +393,8 @@ function SceneTabs({
       aria-label="Example deliverables"
       className="mt-4 ml-2.5 flex gap-1.5 sm:ml-7"
       onKeyDown={onKeyDown}
-      onFocus={() => onFocusChange(true)}
+      // Hold the example only for keyboard users reading along; a mouse click should play it.
+      onFocus={(e) => e.target.matches(':focus-visible') && onFocusChange(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && onFocusChange(false)}
     >
       {scenes.map((s, i) => (
@@ -412,7 +413,7 @@ function SceneTabs({
         >
           <span className="absolute inset-x-0 top-0 h-0.5 bg-rule" />
           {i === index && progressKey && (
-            <motion.span
+            <m.span
               key={progressKey}
               className="absolute top-0 left-0 h-0.5 bg-ink"
               initial={{ width: '0%' }}

@@ -25,6 +25,8 @@ export default defineConfig({
       // The landing page is content that changes rarely: ship it as static HTML
       // and hydrate. Live ledger figures are fetched client-side on top.
       prerender: { enabled: true, crawlLinks: true, failOnError: true },
+      // 8 KB of CSS: inline it rather than spend a render-blocking round-trip on it.
+      server: { build: { inlineCss: true } },
     }),
     // Nitro bundles the server separately and doesn't inherit `build`.
     nitro({ rolldownConfig: { onwarn: quietBuild.rolldownOptions?.onwarn } }),
