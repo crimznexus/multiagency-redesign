@@ -8,25 +8,33 @@
  * Design tokens.
  *
  * Two layers:
- *  - Machine layer: paper, ink, graphite, rule. Everything the system sets.
+ *  - Machine layer: paper, surfaces, ink, graphite, rules. Everything the system sets.
  *  - Human layer: pencil. Used ONLY for marks a person made — edits, review
  *    notes, approvals. Never decoration, never a generic "brand accent".
  *
- * Contrast on paper: ink 15.3, graphite 5.7, pencil-deep 5.0, pencil 3.7.
- * `pencil` is for strokes, marks and large text only; small red text uses
- * `pencil-deep` so it clears WCAG AA.
+ * Contrast (worst case across paper/surface/card): ink ≥ 14, graphite ≥ 5.7,
+ * struck ≥ 4.5, pencil-deep ≥ 4.6. `pencil` (3.7) is for strokes, marks and
+ * large text only; small red text uses `pencil-deep`.
  */
 @theme {
   --color-*: initial;
   --color-paper: oklch(93.7% 0.0083 91.5);
-  --color-surface: oklch(96.4% 0.0054 95.1);
+  --color-paper-2: oklch(91% 0.01 87.5);
+  --color-surface: oklch(97.3% 0.0054 95.1);
+  --color-card: oklch(98.5% 0.0041 91.4);
   --color-ink: oklch(19.1% 0.002 106.6);
   --color-ink-soft: oklch(28.1% 0.0056 91.6);
   --color-graphite: oklch(46.8% 0.0083 88.7);
-  --color-struck: oklch(63.1% 0.0095 84.6);
-  --color-rule: oklch(84.5% 0.0114 89.7);
+  --color-struck: oklch(50.4% 0.0101 84.6);
+  --color-rule: oklch(86.7% 0.0114 89.7);
+  --color-rule-soft: oklch(90.7% 0.01 87.5);
   --color-pencil: oklch(59.5% 0.1927 34.5);
   --color-pencil-deep: oklch(51.9% 0.1697 35.8);
+  --color-pencil-wash: oklch(91.5% 0.0309 43.1);
+  --color-clay: oklch(89.4% 0.0279 67.5);
+  --color-screen: oklch(21.5% 0.004 84);
+  --color-screen-mute: oklch(77% 0.012 84);
+  --color-white: #fff;
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -35,24 +43,28 @@
   --font-mono: "Geist Mono Variable", ui-monospace, monospace;
 
   /* Fluid type — rem-based so it respects the user's font size. */
-  --text-display: clamp(2.25rem, 1.39rem + 3.69vw, 4.75rem);
+  --text-display: clamp(2.5rem, 1.9rem + 2.53vw, 4.25rem);
   --text-display--line-height: 1;
-  --text-display--letter-spacing: -0.034em;
-  --text-draft: clamp(1.875rem, 1.2rem + 2.9vw, 3.625rem);
-  --text-draft--line-height: 1.04;
-  --text-draft--letter-spacing: -0.034em;
+  --text-display--letter-spacing: -0.036em;
   --text-h2: clamp(1.875rem, 1.35rem + 2.2vw, 3rem);
   --text-h2--line-height: 1.05;
   --text-h2--letter-spacing: -0.03em;
-  --text-lede: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
-  --text-lede--line-height: 1.5;
-  --text-note: 1.3125rem;
+  --text-lede: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lede--line-height: 1.55;
+  --text-note: 1.125rem;
   --text-note--line-height: 1.3;
   --text-label: 0.78125rem;
   --text-label--line-height: 1.2;
+  --text-micro: 0.71875rem;
+  --text-micro--line-height: 1;
 
   --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
   --ease-out-soft: cubic-bezier(0.2, 0.7, 0.1, 1);
+
+  --shadow-card: 0 1px 0 rgb(20 20 19 / 0.04), 0 1px 2px rgb(20 20 19 / 0.06);
+  --shadow-window: 0 1px 0 rgb(20 20 19 / 0.04), 0 2px 4px rgb(20 20 19 / 0.04), 0 24px 48px -20px rgb(40 30 20 / 0.28);
 
   --container-page: 80rem;
   --spacing-gutter: clamp(1rem, 4vw, 3rem);
@@ -68,9 +80,10 @@
     font-size: 1.0625rem;
     line-height: 1.55;
     text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
   ::selection {
-    @apply bg-pencil text-paper;
+    @apply bg-pencil text-white;
   }
   :focus-visible {
     outline: 2px solid var(--color-ink);
@@ -80,12 +93,48 @@
 }
 
 @layer components {
-  /* Page container + 12-column grid; columns 10–12 are the reviewer margin. */
   .page {
     @apply mx-auto w-full max-w-page px-gutter;
   }
-  .page-grid {
-    @apply grid grid-cols-12 gap-x-6;
+
+  /*
+   * Tracked-change marks. <del>/<ins> keep the semantics; the strike is a
+   * background line so it can draw across wrapped lines like a pencil stroke.
+   */
+  .mark-del {
+    text-decoration: none;
+    background-image: linear-gradient(var(--color-pencil), var(--color-pencil));
+    background-repeat: no-repeat;
+    background-position: 0 58%;
+    background-size: 0% 2px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition:
+      background-size 0.7s var(--ease-out-soft),
+      color 0.4s;
+  }
+  [data-struck] .mark-del {
+    background-size: 100% 2px;
+    color: var(--color-struck);
+  }
+  .mark-ins {
+    text-decoration: none;
+    margin-left: 0.3em;
+    font-weight: 550;
+    color: var(--color-pencil-deep);
+    transition: color 0.6s;
+  }
+  .mark-ins::before {
+    content: "‸";
+    color: var(--color-pencil);
+    font-weight: 400;
+    margin-right: 2px;
+  }
+  [data-approved] .mark-ins {
+    color: var(--color-ink);
+  }
+  [data-approved] .mark-ins::before {
+    content: none;
   }
 }
 

@@ -1,4 +1,5 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import { MotionConfig } from 'motion/react'
 import type { ReactNode } from 'react'
 import appCss from '~/styles/app.css?url'
 
@@ -30,7 +31,10 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <RootDocument>
-      <Outlet />
+      {/* Every Motion animation honours the OS "reduce motion" setting. */}
+      <MotionConfig reducedMotion="user">
+        <Outlet />
+      </MotionConfig>
     </RootDocument>
   )
 }
