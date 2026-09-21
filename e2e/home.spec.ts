@@ -29,7 +29,7 @@ test.describe('review workspace', () => {
     await page.keyboard.press('ArrowRight')
     await expect(tabs.nth(1)).toBeFocused()
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
-    await expect(page.getByRole('figure')).toHaveAccessibleName(/Ping · onramp checkout/)
+    await expect(page.getByRole('figure', { name: /^Example/ })).toHaveAccessibleName(/Ping · onramp checkout/)
   })
 
   test('clicking an example plays it rather than freezing it', async ({ page }) => {
@@ -73,7 +73,7 @@ test('the workspace never shifts the page while it plays (CLS)', async ({ page }
     }).observe({ type: 'layout-shift', buffered: true })
   })
   await page.goto('/')
-  await page.getByRole('figure').scrollIntoViewIfNeeded()
+  await page.getByRole('figure', { name: /^Example/ }).scrollIntoViewIfNeeded()
   const tabs = page.getByRole('tab')
   const before = await page.getByRole('tablist').boundingBox()
   // Two scene changes: draft → review → revised → approved → next scene.
@@ -81,6 +81,38 @@ test('the workspace never shifts the page while it plays (CLS)', async ({ page }
   const after = await page.getByRole('tablist').boundingBox()
   expect(after?.y).toBe(before?.y)
   expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02)
+})
+
+test.describe('selected work', () => {
+  test('lists the featured projects with safe external links', async ({ page }) => {
+    await page.goto('/')
+    const work = page.getByRole('region', { name: 'Work, reviewed and shipped.' })
+    await expect(work.getByRole('heading', { level: 3 })).toHaveText([
+      'Ping',
+      'NEAR Builders',
+      'Legion Creator Programme',
+      'Also active',
+    ])
+    for (const link of await work.locator('a[target="_blank"]').all()) {
+      await expect(link).toHaveAttribute('rel', /noopener/)
+    }
+  })
+
+  test('screenshots have alt text and reserved dimensions', async ({ page }) => {
+    await page.goto('/')
+    for (const img of await page.locator('#work img').all()) {
+      await expect(img).toHaveAttribute('alt', /.+/)
+      await expect(img).toHaveAttribute('width', '1200')
+      await expect(img).toHaveAttribute('height', '750')
+    }
+  })
+
+  test('the brief ledger is a real table: nine briefs, all accepted', async ({ page }) => {
+    await page.goto('/')
+    const table = page.getByRole('table', { name: /video briefs/ })
+    await expect(table.getByRole('row')).toHaveCount(10) // header + 9
+    await expect(table.getByText('Accepted', { exact: true })).toHaveCount(9)
+  })
 })
 
 test('mobile menu opens as a compact panel and closes on navigation', async ({ page }) => {

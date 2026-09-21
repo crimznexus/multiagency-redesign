@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Hero } from '~/components/hero/Hero'
 import { SiteHeader } from '~/components/SiteHeader'
+import { SelectedWork } from '~/components/work/SelectedWork'
 import { getLedger } from '~/server/functions'
 
 export const Route = createFileRoute('/')({
@@ -16,7 +17,7 @@ function Home() {
       <SiteHeader />
       <main>
         <Hero ledger={ledger} />
-        <div className="h-24" />
+        <SelectedWork />
       </main>
     </>
   )
