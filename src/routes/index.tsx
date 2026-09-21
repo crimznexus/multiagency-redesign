@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Hero } from '~/components/hero/Hero'
 import { SiteHeader } from '~/components/SiteHeader'
+import { Services } from '~/components/services/Services'
 import { SelectedWork } from '~/components/work/SelectedWork'
 import { getLedger } from '~/server/functions'
 
@@ -18,6 +19,7 @@ function Home() {
       <main>
         <Hero ledger={ledger} />
         <SelectedWork />
+        <Services />
       </main>
     </>
   )

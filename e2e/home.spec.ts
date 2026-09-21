@@ -115,6 +115,30 @@ test.describe('selected work', () => {
   })
 })
 
+test.describe('services', () => {
+  test('four services, each splitting what AI drafts from what people own', async ({ page }) => {
+    await page.goto('/')
+    const section = page.getByRole('region', { name: 'What we make.' })
+    await expect(section.getByRole('heading', { level: 3 })).toHaveText([
+      'Product & web',
+      'Bots & automation',
+      'Content & video',
+      'Social & community',
+    ])
+    await expect(section.getByText('AI drafts', { exact: true })).toHaveCount(4)
+    await expect(section.getByText('People own', { exact: true })).toHaveCount(4)
+  })
+
+  test('every proof link points at real work on the page', async ({ page }) => {
+    await page.goto('/')
+    const hrefs = await page
+      .locator('#services a[href^="#"]')
+      .evaluateAll((as) => as.map((a) => a.getAttribute('href')))
+    expect(hrefs.length).toBeGreaterThan(0)
+    for (const href of new Set(hrefs)) await expect(page.locator(href as string)).toHaveCount(1)
+  })
+})
+
 test('mobile menu opens as a compact panel and closes on navigation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')

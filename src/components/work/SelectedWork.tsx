@@ -36,13 +36,15 @@ export function SelectedWork() {
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
+const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
 function Featured({ project, index }: { project: FeaturedProject; index: number }) {
   const flip = index % 2 === 1
   return (
     <article
+      id={`work-${project.id}`}
       aria-labelledby={`${project.id}-title`}
-      className="group grid grid-cols-[minmax(0,1fr)] items-center gap-8 lg:grid-cols-12 lg:gap-6"
+      className="group scroll-mt-8 grid grid-cols-[minmax(0,1fr)] items-center gap-8 lg:grid-cols-12 lg:gap-6"
     >
       <figure className={`lg:col-span-7 ${flip ? 'lg:order-2 lg:col-start-6' : ''}`}>
         <div className="transition duration-500 ease-out-soft group-hover:-translate-y-1 group-hover:drop-shadow-[0_18px_24px_rgb(40_30_20/0.12)] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
@@ -110,7 +112,8 @@ function AlsoActive({ projects }: { projects: OtherProject[] }) {
         {projects.map((p) => (
           <li
             key={p.name}
-            className="grid gap-x-6 gap-y-2 border-b border-rule py-5 md:grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,3fr)] md:items-baseline"
+            id={`work-${slug(p.name)}`}
+            className="scroll-mt-8 grid gap-x-6 gap-y-2 border-b border-rule py-5 md:grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,3fr)] md:items-baseline"
           >
             <span className="text-lg font-semibold tracking-tight">{p.name}</span>
             <span className="text-graphite">{p.description}</span>
