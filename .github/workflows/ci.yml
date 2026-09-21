@@ -68,7 +68,9 @@ jobs:
               const lhr = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8"));
               const s = Object.values(lhr.categories).map((c) => `${c.id} ${Math.round(c.score * 100)}`).join(" · ");
               const m = ["first-contentful-paint", "largest-contentful-paint", "total-blocking-time"].map((k) => `${k.split("-").map((w) => w[0]).join("").toUpperCase()} ${lhr.audits[k].displayValue}`).join(" · ");
-              console.log(`::notice title=Lighthouse::${s} | ${m}`);
+              console.log(`::notice title=Lighthouse::${s} | ${m} | CLS ${lhr.audits["cumulative-layout-shift"].displayValue}`);
+              for (const it of lhr.audits["layout-shifts"]?.details?.items ?? [])
+                console.log(`::notice title=Layout shift::${(it.score ?? 0).toFixed(3)} ${it.node?.snippet?.slice(0, 180) ?? ""}`);
             }
             const a = `${dir}/assertion-results.json`;
             if (fs.existsSync(a)) for (const r of JSON.parse(fs.readFileSync(a, "utf8")).filter((r) => !r.passed))

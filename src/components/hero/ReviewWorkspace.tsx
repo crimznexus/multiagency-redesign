@@ -196,35 +196,66 @@ function DraftDoc({ scene, phase, linesShown }: { scene: Scene; phase: Phase; li
           {chip.text}
         </span>
       </div>
-      <div className="grid gap-2.5">
-        {scene.lines.map((line, i) => (
-          // Lines are "written in" with a wipe, not faded: text is never translucent,
-          // so it never dips below contrast mid-animation.
-          <m.div
-            key={`${scene.id}:${line.tag}:${isEdited(line) ? line.draft : line.text}`}
-            data-target={isEdited(line) || undefined}
-            initial={false}
-            animate={{ clipPath: i < linesShown ? 'inset(0% 0% 0% 0%)' : 'inset(0% 100% 0% 0%)' }}
-            transition={{ duration: 0.35, ease }}
-            className={`grid grid-cols-[44px_minmax(0,1fr)] gap-2.5 rounded-[3px] text-[14.5px] leading-normal transition-colors duration-500 ${
-              isEdited(line) && reached(phase, 'struck')
-                ? 'bg-linear-to-r from-pencil-wash from-0% to-transparent to-85%'
-                : ''
-            }`}
-          >
-            <span className="font-mono text-[11.5px] leading-[1.9] text-struck">{line.tag}</span>
-            {isEdited(line) ? (
-              <span>
-                {line.keep && `${line.keep} `}
-                <del className="mark-del">{line.draft}</del>
-                {reached(phase, 'revised') && <ins className="mark-ins">{line.revised}</ins>}
-              </span>
-            ) : (
-              <span>{line.text}</span>
-            )}
-          </m.div>
-        ))}
+      {/*
+        Every scene's finished draft is stacked in one grid cell (only the current one
+        visible), so the window is always as tall as its tallest state: switching scenes
+        or inserting a revision never shifts the page (CLS), at any width.
+      */}
+      <div className="grid">
+        {scenes.map((s) =>
+          s.id === scene.id ? (
+            <DraftLines key={s.id} scene={s} phase={phase} linesShown={linesShown} />
+          ) : (
+            <DraftLines key={s.id} scene={s} phase="approved" linesShown={s.lines.length} sizer />
+          ),
+        )}
       </div>
+    </div>
+  )
+}
+
+function DraftLines({
+  scene,
+  phase,
+  linesShown,
+  sizer = false,
+}: {
+  scene: Scene
+  phase: Phase
+  linesShown: number
+  /** Invisible copy that only reserves height. */
+  sizer?: boolean
+}) {
+  return (
+    <div className={`col-start-1 row-start-1 grid content-start gap-2.5 ${sizer ? 'invisible' : ''}`}>
+      {scene.lines.map((line, i) => (
+        // Lines are "written in" with a wipe, not faded: text is never translucent,
+        // so it never dips below contrast mid-animation.
+        <m.div
+          key={`${line.tag}:${isEdited(line) ? line.draft : line.text}`}
+          data-target={(!sizer && isEdited(line)) || undefined}
+          initial={false}
+          animate={{ clipPath: i < linesShown ? 'inset(0% 0% 0% 0%)' : 'inset(0% 100% 0% 0%)' }}
+          transition={{ duration: 0.35, ease }}
+          className={`grid grid-cols-[44px_minmax(0,1fr)] gap-2.5 rounded-[3px] text-[14.5px] leading-normal transition-colors duration-500 ${
+            isEdited(line) && reached(phase, 'struck')
+              ? 'bg-linear-to-r from-pencil-wash from-0% to-transparent to-85%'
+              : ''
+          }`}
+        >
+          <span className="font-mono text-[11.5px] leading-[1.9] text-struck">{line.tag}</span>
+          {isEdited(line) ? (
+            <span>
+              {line.keep && `${line.keep} `}
+              <del className="mark-del">{line.draft}</del>
+              {/* Space for the revision is reserved from the start; it becomes visible when written. */}
+              <ins className={`mark-ins ${reached(phase, 'revised') ? '' : 'invisible'}`}>{line.revised}</ins>
+            </span>
+          ) : (
+            <span>{line.text}</span>
+          )}
+        </m.div>
+      ))}
     </div>
   )
 }

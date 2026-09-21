@@ -61,6 +61,28 @@ test.describe('review workspace', () => {
   })
 })
 
+test('the workspace never shifts the page while it plays (CLS)', async ({ page }) => {
+  test.setTimeout(40_000)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.addInitScript(() => {
+    const w = window as unknown as { __cls: number }
+    w.__cls = 0
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as (PerformanceEntry & { value: number; hadRecentInput: boolean })[])
+        if (!e.hadRecentInput) w.__cls += e.value
+    }).observe({ type: 'layout-shift', buffered: true })
+  })
+  await page.goto('/')
+  await page.getByRole('figure').scrollIntoViewIfNeeded()
+  const tabs = page.getByRole('tab')
+  const before = await page.getByRole('tablist').boundingBox()
+  // Two scene changes: draft → review → revised → approved → next scene.
+  await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true', { timeout: 20_000 })
+  const after = await page.getByRole('tablist').boundingBox()
+  expect(after?.y).toBe(before?.y)
+  expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02)
+})
+
 test('mobile menu opens as a compact panel and closes on navigation', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
