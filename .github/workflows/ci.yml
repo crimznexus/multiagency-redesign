@@ -57,3 +57,20 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx --yes @lhci/cli@0.15.1 autorun
+      - name: Report scores
+        if: always()
+        # Surface each run's scores and any failed assertion as annotations on the check.
+        run: |
+          node -e '
+            const fs = require("fs"), dir = ".lighthouseci";
+            if (!fs.existsSync(dir)) process.exit(0);
+            for (const f of fs.readdirSync(dir).filter((f) => f.startsWith("lhr-") && f.endsWith(".json"))) {
+              const lhr = JSON.parse(fs.readFileSync(`${dir}/${f}`, "utf8"));
+              const s = Object.values(lhr.categories).map((c) => `${c.id} ${Math.round(c.score * 100)}`).join(" · ");
+              const m = ["first-contentful-paint", "largest-contentful-paint", "total-blocking-time"].map((k) => `${k.split("-").map((w) => w[0]).join("").toUpperCase()} ${lhr.audits[k].displayValue}`).join(" · ");
+              console.log(`::notice title=Lighthouse::${s} | ${m}`);
+            }
+            const a = `${dir}/assertion-results.json`;
+            if (fs.existsSync(a)) for (const r of JSON.parse(fs.readFileSync(a, "utf8")).filter((r) => !r.passed))
+              console.log(`::error title=Lighthouse assertion::${r.auditProperty || r.auditId} ${r.operator} ${r.expected}, got ${r.actual}`);
+          '
