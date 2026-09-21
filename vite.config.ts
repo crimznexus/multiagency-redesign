@@ -29,7 +29,14 @@ export default defineConfig({
       server: { build: { inlineCss: true } },
     }),
     // Nitro bundles the server separately and doesn't inherit `build`.
-    nitro({ rolldownConfig: { onwarn: quietBuild.rolldownOptions?.onwarn } }),
+    nitro({
+      rolldownConfig: { onwarn: quietBuild.rolldownOptions?.onwarn },
+      routeRules: {
+        // Screenshots aren't content-hashed (they're re-captured in place), so cache
+        // for a day and revalidate in the background rather than for a year.
+        '/work/**': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
+      },
+    }),
     // react's plugin must come after start's
     viteReact(),
   ],
