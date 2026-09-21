@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.output/
+.vercel/
+.nitro/
+.tanstack/
+*.tsbuildinfo
+
+# test output
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+
+# env
+.env
+.env.*
+!.env.example
+
+# logs / os / editors
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# local AI tooling — never committed
+.claude/
+CLAUDE.md
+AGENTS.md
+.cursor/
+.aider*
