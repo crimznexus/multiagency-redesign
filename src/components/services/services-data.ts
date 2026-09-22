@@ -10,6 +10,10 @@ export interface Service {
   summary: string
   aiDrafts: string
   peopleOwn: string
+  /** An example brief, in the words a client might write it */
+  brief: string
+  /** One-line tab subtitle in the project console */
+  tagline: string
   /** Anchors into Selected work */
   proof: { label: string; href: string }[]
 }
@@ -17,6 +21,8 @@ export interface Service {
 export const services: Service[] = [
   {
     id: 'product',
+    tagline: 'Sites, apps and features',
+    brief: 'A checkout that takes card or Cash App and pays out on any chain.',
     name: 'Product & web',
     summary: 'Websites, web apps and product features, designed, built and shipped.',
     aiDrafts: 'Scaffolds, component variants, test cases, first-pass copy.',
@@ -29,6 +35,8 @@ export const services: Service[] = [
   },
   {
     id: 'bots',
+    tagline: 'Telegram, Discord, your tools',
+    brief: 'A Telegram assistant that answers our builders and points them to open projects.',
     name: 'Bots & automation',
     summary: 'Agents and bots that do real work in Telegram, Discord and your own tools.',
     aiDrafts: 'Conversation flows, tool integrations, reply drafts.',
@@ -40,6 +48,8 @@ export const services: Service[] = [
   },
   {
     id: 'content',
+    tagline: 'Explainers and launches',
+    brief: 'A 60-second release video for our 1.2 launch, with captions.',
     name: 'Content & video',
     summary: 'Explainers, launch videos and motion design, briefed, reviewed and delivered on schedule.',
     aiDrafts: 'Scripts, storyboards, caption passes.',
@@ -48,6 +58,8 @@ export const services: Service[] = [
   },
   {
     id: 'social',
+    tagline: 'Posts, replies, community',
+    brief: 'Three posts a week that sound like us, plus replies to our community.',
     name: 'Social & community',
     summary: 'A consistent, on-brand presence, run by people who know your community.',
     aiDrafts: 'Post calendars, first drafts, trend digests.',

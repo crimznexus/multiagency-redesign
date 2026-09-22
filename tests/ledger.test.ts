@@ -44,7 +44,20 @@ describe('summarize', () => {
     expect(summary.latest.map((p) => p.id)).toEqual([3, 2])
   })
 
+  it('counts payments per month, oldest first', () => {
+    const summary = summarize([
+      transfer(3, 'a.near', '2026-08-02T00:00:00Z'),
+      transfer(1, 'a.near', '2026-06-15T00:00:00Z'),
+      transfer(2, 'b.near', '2026-08-01T00:00:00Z'),
+      transfer(4, 'c.near', '2026-08-03T00:00:00Z', 'Rejected'),
+    ])
+    expect(summary.byMonth).toEqual([
+      { month: '2026-06', count: 1 },
+      { month: '2026-08', count: 2 },
+    ])
+  })
+
   it('handles an empty ledger', () => {
-    expect(summarize([])).toEqual({ payments: 0, contributors: 0, since: null, latest: [] })
+    expect(summarize([])).toEqual({ payments: 0, contributors: 0, since: null, byMonth: [], latest: [] })
   })
 })
