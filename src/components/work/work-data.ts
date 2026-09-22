@@ -1,8 +1,8 @@
 /**
  * Selected work. Descriptions come from each project's own site; the Legion
  * briefs come from the agency's public payment record (one approved payout
- * per accepted brief). MultiAgency's exact role per project isn't public, so
- * reviewer notes stay factual.
+ * per accepted brief). NEAR Builders' figures are from its home page as
+ * captured in September 2026.
  */
 
 export interface Brief {
@@ -20,7 +20,8 @@ export interface FeaturedProject {
   description: string
   tags: string[]
   link?: { href: string; label: string }
-  note: string
+  /** Hard numbers shown as the card's stat row (from the live site or the payment record) */
+  stats: { value: string; label: string }[]
   visual: Visual
   caption: string
 }
@@ -41,13 +42,16 @@ export const featured: FeaturedProject[] = [
       'A chain-abstracted onramp: buy, sell or pay with a card or Cash App and receive tokens on any chain, in one flow.',
     tags: ['Product', 'Web', 'Payments'],
     link: { href: 'https://onramp.pingpay.io', label: 'onramp.pingpay.io' },
-    note: 'Onramp flow live.',
+    stats: [
+      { value: 'Live', label: 'onramp in production' },
+      { value: '2', label: 'ways to pay: card, Cash App' },
+    ],
     visual: {
       kind: 'screenshot',
       image: 'ping',
       alt: 'Ping’s onramp: a buy, sell and pay widget converting USD to NEAR.',
     },
-    caption: 'Live site · captured Sep 2026',
+    caption: 'Live site, captured September 2026',
   },
   {
     id: 'nearbuilders',
@@ -57,13 +61,16 @@ export const featured: FeaturedProject[] = [
       'An open network where builders find collaborators, discover open projects and ship community-owned products across NEAR.',
     tags: ['Platform', 'Web', 'Community'],
     link: { href: 'https://nearbuilders.org', label: 'nearbuilders.org' },
-    note: 'Network live and growing.',
+    stats: [
+      { value: '113', label: 'builders on the network' },
+      { value: '102', label: 'projects listed' },
+    ],
     visual: {
       kind: 'screenshot',
       image: 'nearbuilders',
       alt: 'The NEAR Builders home page: “Build what’s next, together”, with builder and project counts.',
     },
-    caption: 'Live site · captured Sep 2026',
+    caption: 'Live site, captured September 2026',
   },
   {
     id: 'legion',
@@ -72,7 +79,10 @@ export const featured: FeaturedProject[] = [
     description:
       'Nine commissioned videos for NEAR AI and IronClaw: cinematic explainers, motion-design release videos and real bot walkthroughs. Each had a written brief, a named reviewer, and payment on acceptance.',
     tags: ['Content', 'Video', 'Motion'],
-    note: 'Nine of nine briefs accepted.',
+    stats: [
+      { value: '9/9', label: 'briefs accepted' },
+      { value: '9', label: 'payouts on-chain' },
+    ],
     visual: {
       kind: 'briefs',
       briefs: [

@@ -2,14 +2,16 @@
 
 A redesign of the [multiagency.ai](https://multiagency.ai) landing page: a human-led, AI-native agency, presented to the clients who hire it.
 
-> Work in progress. A full write-up — audit, design decisions and trade-offs — lands with the finished page.
+> Design decisions, tokens and components are documented in [`DESIGN.md`](DESIGN.md).
 
 ## Stack
 
 - **TanStack Start** (React 19) on **Vite 8**, prerendered to static HTML and deployed through **Nitro** on Vercel
-- **Tailwind CSS v4** with OKLCH design tokens defined in CSS (`src/styles/app.css`)
-- **Motion** for the one signature animation; native View Transitions and CSS scroll-driven animations elsewhere
-- Self-hosted variable fonts via **Fontsource** — Schibsted Grotesk, Newsreader, Geist Mono
+- **Tailwind CSS v4**, with every token defined in `DESIGN.md` and mirrored in `src/styles/app.css`
+- No animation library: nothing plays on load except the live-status dot; the project console cross-fades only when you switch tabs
+- **Geist** and **Geist Mono** variable fonts, self-hosted and subset to 12 KB and 9 KB (`npm run subset:font`)
+- Design cleaned with [taste-skill](https://github.com/Leonxlnx/taste-skill) (installed locally with `npx skills add Leonxlnx/taste-skill`); decisions in `DESIGN.md`
+- An interactive project console (which steps AI drafts, which people own) and a live treasury dashboard read from the chain
 - Live figures read straight from the agency's public payment ledger (`src/lib/ledger.ts`)
 - **TypeScript 7** (strict), **Biome**, **Vitest**, **Playwright + axe**, **Lighthouse CI**
 

@@ -17,15 +17,13 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "capture:work": "node scripts/capture-work.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "subset:font": "sh scripts/subset-font.sh"
   },
   "dependencies": {
-    "@fontsource-variable/geist-mono": "^5.3.0",
-    "@fontsource-variable/newsreader": "^5.3.0",
-    "@fontsource-variable/schibsted-grotesk": "^5.3.0",
+    "@phosphor-icons/react": "^2.1.10",
     "@tanstack/react-router": "^1.170.38",
     "@tanstack/react-start": "^1.168.56",
-    "motion": "^13.4.0",
     "nitro": "3.0.260903-beta",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
@@ -33,6 +31,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "^2.5.14",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.2",

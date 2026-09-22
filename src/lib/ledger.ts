@@ -43,6 +43,8 @@ export interface LedgerSummary {
   contributors: number
   /** ISO 8601 date of the first payment */
   since: string | null
+  /** Payments per calendar month (UTC), oldest first, e.g. `{ month: '2026-06', count: 3 }` */
+  byMonth: { month: string; count: number }[]
   latest: Payment[]
 }
 
@@ -70,8 +72,18 @@ export function summarize(proposals: RawProposal[], latestCount = 5): LedgerSumm
     payments: payments.length,
     contributors: new Set(payments.map((p) => p.recipient)).size,
     since: payments.at(-1)?.paidAt ?? null,
+    byMonth: countByMonth(payments),
     latest: payments.slice(0, latestCount),
   }
+}
+
+function countByMonth(payments: Payment[]): LedgerSummary['byMonth'] {
+  const counts = new Map<string, number>()
+  for (const p of payments) {
+    const month = p.paidAt.slice(0, 7)
+    counts.set(month, (counts.get(month) ?? 0) + 1)
+  }
+  return [...counts].map(([month, count]) => ({ month, count })).sort((a, b) => a.month.localeCompare(b.month))
 }
 
 async function view<T>(rpcUrl: string, method: string, args: object, signal?: AbortSignal): Promise<T> {
