@@ -1,43 +1,41 @@
 import { TREASURY_ACCOUNT } from '~/lib/ledger'
-import { LogoMark } from './Logo'
 import { NAV } from './SiteHeader'
-import { ArrowUpRight } from './ui/icons'
 import { ExternalLink } from './ui/primitives'
 
 const elsewhere = [
-  { href: `https://nearblocks.io/address/${TREASURY_ACCOUNT}`, label: 'Treasury' },
-  { href: 'https://github.com/MultiAgency', label: 'GitHub' },
+  { href: 'https://github.com/MultiAgency/dashboard', label: 'Open source' },
   { href: 'https://x.com/_multiagency', label: 'X' },
 ]
 
-const item = 'inline-flex min-h-11 items-center gap-1 text-sm text-muted transition-colors hover:text-cream'
+const item = 'inline-flex min-h-11 items-center text-[15px] text-muted transition-colors hover:text-ink'
 
-/* One row of links, not a four-column link farm. */
+/** The wordmark at poster scale, then one row of links. */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-cream/8">
-      <div className="page flex flex-col gap-6 py-10 lg:flex-row lg:items-center lg:justify-between">
-        <a href="/" aria-label="MultiAgency home" className="inline-flex min-h-11 items-center gap-2.5 self-start">
-          <LogoMark className="size-5" />
-          <span className="text-[17px] font-semibold tracking-[-0.02em]">MultiAgency</span>
-        </a>
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-6">
-          {NAV.map((n) => (
-            <a key={n.href} href={n.href} className={item}>
-              {n.label}
-            </a>
-          ))}
-          {elsewhere.map((n) => (
-            <ExternalLink key={n.href} href={n.href} className={item}>
-              {n.label}
-              <ArrowUpRight className="size-3" />
-            </ExternalLink>
-          ))}
-        </nav>
+    <footer className="border-t-2 border-ink">
+      <div className="page pt-10 pb-8">
+        <p
+          aria-hidden="true"
+          className="font-semibold tracking-[-0.065em] text-[clamp(2.5rem,13.5vw,13.5rem)] leading-[0.9] [padding-bottom:0.06em]"
+        >
+          MultiAgency
+        </p>
+        <div className="mt-8 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-7">
+            {NAV.map((n) => (
+              <a key={n.href} href={n.href} className={item}>
+                {n.label}
+              </a>
+            ))}
+            {elsewhere.map((n) => (
+              <ExternalLink key={n.href} href={n.href} className={item}>
+                {n.label}
+              </ExternalLink>
+            ))}
+          </nav>
+          <p className="type-mono text-muted">{TREASURY_ACCOUNT}</p>
+        </div>
       </div>
-      <p className="page border-t border-cream/8 py-6 text-sm text-dim">
-        © 2026 MultiAgency. Open books, open source, open doors.
-      </p>
     </footer>
   )
 }

@@ -1,49 +1,41 @@
 import type { LedgerResult } from '~/server/ledger'
 import { ProjectConsole } from './console/ProjectConsole'
-import { CONTACT_LABEL, CONTACT_URL } from './SiteHeader'
+import { APPLY_LABEL, APPLY_URL, CONTACT_LABEL, CONTACT_URL } from './SiteHeader'
 import { ArrowRight } from './ui/icons'
-import { LiveDot } from './ui/primitives'
 
+/**
+ * Poster hero: the headline runs the full grid, the value prop and the two
+ * CTAs sit in the left columns, and the pipeline (a real, working piece of the
+ * product) takes the right. Four text elements, nothing else (DESIGN.md §5).
+ */
 export function Hero({ ledger }: { ledger: LedgerResult }) {
-  const { payments, contributors, live } = ledger
   return (
-    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden">
-      {/* Atmosphere: one soft light from above, nothing else (DESIGN.md §7). */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_45%_at_50%_0%,rgb(247_238_27/0.06),transparent_70%)]"
-      />
+    <section aria-labelledby="hero-title" className="page pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14">
+      <h1 id="hero-title" className="type-display rise">
+        Build agencies
+        <br />
+        together.
+      </h1>
 
-      <div className="page flex flex-col items-center pt-[clamp(3rem,8vw,6rem)] text-center">
-        {/* The one live indicator above the fold: real data, links to the record. */}
-        <a href="#open-books" className="pill transition-colors hover:border-cream/20 hover:text-cream">
-          <LiveDot live={live} />
-          {payments} public payouts to {contributors} builders
-        </a>
-
-        <h1 id="hero-title" className="type-display mt-7 max-w-[15ch]">
-          The AI-native agency <span className="text-signal">that shows its work.</span>
-        </h1>
-
-        <p className="mt-6 max-w-[34rem] text-lede text-muted">
-          Products, bots, video and social for teams on NEAR. AI drafts fast, named specialists ship, every payout is
-          public.
-        </p>
-
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <a href={CONTACT_URL} className="btn btn-signal min-h-12 px-6">
-            {CONTACT_LABEL}
-            <ArrowRight />
-          </a>
-          <a href="#how-it-works" className="btn btn-ghost min-h-12 px-6">
-            See how it works
-          </a>
+      <div className="grid12 mt-8 items-start gap-y-10 lg:mt-12">
+        <div className="rise flex flex-col gap-8 [animation-delay:80ms] lg:col-span-5">
+          <p className="max-w-[36ch] text-lede text-muted">
+            Human-led, AI-native agencies for hire. AI writes the first draft. Named people build, review and sign off
+            the rest.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href={CONTACT_URL} className="btn btn-signal">
+              {CONTACT_LABEL}
+              <ArrowRight />
+            </a>
+            <a href={APPLY_URL} className="btn btn-ghost">
+              {APPLY_LABEL}
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div id="how-it-works" className="page mt-[clamp(3.5rem,7vw,5rem)] scroll-mt-24">
-        <div className="mx-auto max-w-[64rem]">
-          <ProjectConsole payments={payments} />
+        <div id="how-it-works" className="rise scroll-mt-20 [animation-delay:160ms] lg:col-span-6 lg:col-start-7">
+          <ProjectConsole payments={ledger.payments} />
         </div>
       </div>
     </section>

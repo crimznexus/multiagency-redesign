@@ -1,5 +1,4 @@
 import { Check, Cross } from './ui/icons'
-import { SectionHead } from './ui/primitives'
 
 type Cell = { text: string; good: boolean }
 
@@ -48,24 +47,28 @@ const rows: { label: string; cells: [Cell, Cell, Cell] }[] = [
   },
 ]
 
+/** Our column is the only filled one: the answer you are meant to read. */
 export function Compare() {
   return (
-    <section id="compare" aria-labelledby="compare-title" className="page scroll-mt-20 py-section">
-      <SectionHead id="compare-title" title="AI speed, without the black box">
-        Agencies are slow and opaque. AI tools answer to no one. We kept the speed and put people in charge.
-      </SectionHead>
+    <section id="compare" aria-labelledby="compare-title" className="scroll-mt-16 border-t border-rule">
+      <div className="page py-section">
+        <h2 id="compare-title" className="type-h2 max-w-[18ch]">
+          AI speed, without the black box.
+        </h2>
+        <p className="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-muted">
+          Agencies are slow and opaque. AI tools answer to no one. We kept the speed and put people in charge.
+        </p>
 
-      <div className="panel mt-14 hidden overflow-hidden md:block">
-        <table className="w-full border-collapse text-left text-sm">
+        <table className="mt-14 hidden w-full border-collapse text-left md:table">
           <caption className="sr-only">How MultiAgency compares with a typical agency and AI tools alone</caption>
           <thead>
-            <tr className="border-b border-cream/8">
-              <td className="w-[22%] px-5 py-4" />
+            <tr className="border-b-2 border-ink">
+              <td className="w-[22%] px-4 py-4" />
               {columns.map((c, i) => (
                 <th
                   key={c}
                   scope="col"
-                  className={`type-label px-5 py-4 font-medium ${i === 2 ? 'bg-cream/4 text-signal' : 'text-dim'}`}
+                  className={`px-4 py-4 text-[15px] font-medium ${i === 2 ? 'bg-signal text-on-signal' : 'text-muted'}`}
                 >
                   {c}
                 </th>
@@ -74,36 +77,23 @@ export function Compare() {
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.label} className="border-b border-cream/8 last:border-b-0">
-                <th scope="row" className="type-label px-5 py-4 align-top font-medium text-dim">
+              <tr key={r.label} className="border-b border-rule">
+                <th scope="row" className="px-4 py-4.5 align-top font-medium">
                   {r.label}
                 </th>
                 {r.cells.map((cell, i) => {
                   const ours = i === 2
                   return (
-                    <td key={cell.text} className={`px-5 py-4 align-top ${ours ? 'bg-cream/4' : ''}`}>
+                    <td
+                      key={cell.text}
+                      className={`px-4 py-4.5 align-top ${ours ? 'bg-signal font-medium text-on-signal' : ''}`}
+                    >
                       <span className="flex items-start gap-2.5">
-                        <span
-                          className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-md ${
-                            cell.good
-                              ? ours
-                                ? 'bg-signal text-on-signal'
-                                : 'bg-cream/8 text-cream'
-                              : 'bg-cream/4 text-dim'
-                          }`}
-                        >
+                        <span className={`mt-1 shrink-0 ${ours || cell.good ? '' : 'text-muted'}`}>
                           {cell.good ? <Check /> : <Cross />}
                           <span className="sr-only">{cell.good ? 'Yes: ' : 'No: '}</span>
                         </span>
-                        <span
-                          className={
-                            ours
-                              ? 'font-medium text-cream'
-                              : cell.good
-                                ? 'text-muted'
-                                : 'text-dim line-through decoration-cream/25'
-                          }
-                        >
+                        <span className={ours ? '' : cell.good ? '' : 'text-muted line-through decoration-rule'}>
                           {cell.text}
                         </span>
                       </span>
@@ -114,41 +104,37 @@ export function Compare() {
             ))}
           </tbody>
         </table>
-      </div>
 
-      {/* Phones: one card per row, our answer first (a sideways-scrolling table reads badly here). */}
-      <ul className="mt-12 grid gap-3 md:hidden">
-        {rows.map((r) => {
-          const [agency, tools, ours] = r.cells
-          return (
-            <li key={r.label} className="panel p-5">
-              <p className="type-label text-dim">{r.label}</p>
-              <p className="mt-3 flex items-start gap-2.5 font-medium">
-                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md bg-signal text-on-signal">
+        {/* Phones: one block per row, our answer first (a sideways table reads badly here). */}
+        <ul className="mt-10 border-t-2 border-ink md:hidden">
+          {rows.map((r) => {
+            const [agency, tools, ours] = r.cells
+            return (
+              <li key={r.label} className="border-b border-rule py-5">
+                <p className="text-sm text-muted">{r.label}</p>
+                <p className="mt-2 inline-flex items-center gap-2 bg-signal px-2 py-1 font-medium text-on-signal">
                   <Check />
-                </span>
-                <span>
-                  <span className="sr-only">MultiAgency: </span>
-                  {ours.text}
-                </span>
-              </p>
-              <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-cream/8 pt-4 text-sm">
-                {[
-                  { who: columns[0], cell: agency },
-                  { who: columns[1], cell: tools },
-                ].map(({ who, cell }) => (
-                  <div key={who}>
-                    <dt className="text-xs text-dim">{who}</dt>
-                    <dd className={`mt-1 ${cell.good ? 'text-muted' : 'text-dim line-through decoration-cream/25'}`}>
-                      {cell.text}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </li>
-          )
-        })}
-      </ul>
+                  <span>
+                    <span className="sr-only">MultiAgency: </span>
+                    {ours.text}
+                  </span>
+                </p>
+                <dl className="mt-3 grid grid-cols-2 gap-3 text-sm text-muted">
+                  {[
+                    { who: columns[0], cell: agency },
+                    { who: columns[1], cell: tools },
+                  ].map(({ who, cell }) => (
+                    <div key={who}>
+                      <dt className="text-xs">{who}</dt>
+                      <dd className={`mt-1 ${cell.good ? '' : 'line-through decoration-rule'}`}>{cell.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </section>
   )
 }

@@ -1,9 +1,14 @@
-import { ArrowUpRight, Check } from '../ui/icons'
-import { ExternalLink, SectionHead } from '../ui/primitives'
+import { ArrowUpRight } from '../ui/icons'
+import { ExternalLink } from '../ui/primitives'
 import { type Brief, type FeaturedProject, featured, type OtherProject, others } from './work-data'
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
+/**
+ * Work, in three weights: two screenshots on an 8/4 split, the video
+ * programme as one big figure against its nine briefs, then the rest as a
+ * plain three-column index. No two of them share a layout.
+ */
 export function SelectedWork() {
   const [ping, builders, legion] = featured
   if (!ping || !builders || !legion) return null
@@ -11,80 +16,40 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="page scroll-mt-20 py-section [contain-intrinsic-size:auto_2200px] [content-visibility:auto]"
+      className="scroll-mt-16 border-t border-rule [contain-intrinsic-size:auto_1800px] [content-visibility:auto]"
     >
-      <SectionHead id="work-title" title="Shipped, live, and on the record">
-        Every figure below comes from the live site or the payment record.
-      </SectionHead>
+      <div className="page py-section">
+        <h2 id="work-title" className="type-h2">
+          Selected work.
+        </h2>
 
-      {/* Bento: 7/5, then a full-width row, then one list panel (no three equal cards). */}
-      <ul className="mt-14 grid gap-4 lg:grid-cols-12">
-        <li className="lg:col-span-7">
-          <ScreenshotCase project={ping} />
-        </li>
-        <li className="lg:col-span-5">
-          <ScreenshotCase project={builders} />
-        </li>
-        <li className="lg:col-span-12">
-          <BriefsCase project={legion} />
-        </li>
-        <li className="lg:col-span-12">
-          <AlsoInProgress projects={others} />
-        </li>
-      </ul>
+        <ul className="grid12 mt-14 gap-y-10">
+          <li className="lg:col-span-8">
+            <ScreenshotCase project={ping} ratio="aspect-[16/10]" sizes="(min-width: 1024px) 860px, 100vw" />
+          </li>
+          <li className="lg:col-span-4">
+            <ScreenshotCase
+              project={builders}
+              ratio="aspect-[16/10] lg:aspect-[4/5]"
+              sizes="(min-width: 1024px) 420px, 100vw"
+            />
+          </li>
+        </ul>
+
+        <BriefsCase project={legion} />
+        <AlsoInProgress projects={others} />
+      </div>
     </section>
   )
 }
 
-function Stats({ stats }: { stats: FeaturedProject['stats'] }) {
-  return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-row border border-cream/8 bg-cream/8">
-      {stats.map((s) => (
-        // dt first for valid markup; flex-col-reverse puts the figure on top visually.
-        <div key={s.label} className="flex flex-col-reverse bg-panel px-4 py-3">
-          <dt className="mt-1 text-xs text-dim">{s.label}</dt>
-          <dd className="font-mono text-2xl font-semibold tracking-[-0.04em] tabular-nums">{s.value}</dd>
-        </div>
-      ))}
-    </dl>
-  )
-}
-
-function CaseHeader({ project }: { project: FeaturedProject }) {
-  return (
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <p className="type-label text-dim">{project.tags.join(', ')}</p>
-        <h3 id={`${project.id}-title`} className="type-h3 mt-2">
-          {project.name}
-        </h3>
-        <p className="mt-1 text-muted">{project.headline}</p>
-      </div>
-      {project.link && (
-        <ExternalLink
-          href={project.link.href}
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-cream/12 bg-cream/4 text-cream transition-colors hover:border-cream/25 hover:bg-cream/8"
-        >
-          <ArrowUpRight className="size-4" />
-          <span className="sr-only">Visit {project.link.label}</span>
-        </ExternalLink>
-      )}
-    </div>
-  )
-}
-
-function ScreenshotCase({ project }: { project: FeaturedProject }) {
+function ScreenshotCase({ project, ratio, sizes }: { project: FeaturedProject; ratio: string; sizes: string }) {
   if (project.visual.kind !== 'screenshot') return null
   const { image, alt } = project.visual
   const src = (w: number, ext: string) => `/work/${image}-${w}.${ext}`
-  const sizes = '(min-width: 1024px) 700px, 100vw'
   return (
-    <article
-      id={`work-${project.id}`}
-      aria-labelledby={`${project.id}-title`}
-      className="panel flex h-full scroll-mt-24 flex-col overflow-hidden"
-    >
-      <div className="border-b border-cream/8 bg-canvas p-3">
+    <figure id={`work-${project.id}`} className="scroll-mt-20">
+      <div className="border border-rule bg-surface">
         <picture>
           <source type="image/avif" srcSet={`${src(640, 'avif')} 640w, ${src(1200, 'avif')} 1200w`} sizes={sizes} />
           <source type="image/webp" srcSet={`${src(640, 'webp')} 640w, ${src(1200, 'webp')} 1200w`} sizes={sizes} />
@@ -95,84 +60,77 @@ function ScreenshotCase({ project }: { project: FeaturedProject }) {
             height={750}
             loading="lazy"
             decoding="async"
-            className="block aspect-[16/10] h-auto w-full rounded-row object-cover object-top"
+            className={`block h-auto w-full object-cover object-left-top ${ratio}`}
           />
         </picture>
-        {project.link && <p className="px-1 pt-2.5 font-mono text-xs text-dim">{project.link.label}</p>}
       </div>
-      <div className="flex flex-1 flex-col gap-5 p-6">
-        <CaseHeader project={project} />
-        <p className="max-w-[40rem] text-sm text-muted">{project.description}</p>
-        <div className="mt-auto">
-          <Stats stats={project.stats} />
+      <figcaption className="flex items-baseline justify-between gap-4 pt-4">
+        <div>
+          <h3 id={`${project.id}-title`} className="type-h3">
+            {project.name}
+          </h3>
+          <p className="mt-1 text-[15px] text-muted">{project.headline}</p>
         </div>
-      </div>
-    </article>
+        {project.link && (
+          <ExternalLink href={project.link.href} className="link shrink-0 text-[15px]">
+            <span className="hidden sm:inline">{project.link.label}</span>
+            <ArrowUpRight />
+          </ExternalLink>
+        )}
+      </figcaption>
+    </figure>
   )
 }
 
 function BriefsCase({ project }: { project: FeaturedProject }) {
   if (project.visual.kind !== 'briefs') return null
   const briefs: Brief[] = project.visual.briefs
+  const accepted = project.stats[0]
   return (
     <article
       id={`work-${project.id}`}
       aria-labelledby={`${project.id}-title`}
-      className="panel grid scroll-mt-24 overflow-hidden lg:grid-cols-12"
+      className="grid12 mt-20 scroll-mt-20 border-t-2 border-ink pt-6"
     >
-      <div className="flex flex-col gap-5 p-6 lg:col-span-5 lg:border-r lg:border-cream/8 lg:p-8">
-        <CaseHeader project={project} />
-        <p className="text-sm text-muted">{project.description}</p>
-        <div className="mt-auto">
-          <Stats stats={project.stats} />
-        </div>
+      <div className="lg:col-span-4">
+        <p className="type-num">{accepted?.value ?? '9/9'}</p>
+        <h3 id={`${project.id}-title`} className="type-h3 mt-4">
+          {project.name}
+        </h3>
+        <p className="mt-2 max-w-[46ch] text-[15px] leading-relaxed text-muted">{project.description}</p>
       </div>
-      {/* Nine briefs as tiles, not nine hairline rows. */}
-      <div className="bg-canvas/50 p-3 lg:col-span-7 lg:p-5">
-        <ul aria-label="Commissioned video briefs, all accepted" className="grid gap-2 sm:grid-cols-3">
-          {briefs.map((b) => (
-            <li key={b.id} className="flex flex-col rounded-row border border-cream/8 bg-panel p-3.5">
-              <span className="flex items-center justify-between font-mono text-xs text-dim tabular-nums">
-                {b.id}
-                <span className="inline-flex items-center gap-1 text-cream">
-                  <Check className="size-3 text-signal" />
-                  Accepted
-                </span>
-              </span>
-              <span className="mt-3 text-sm font-medium">{b.title}</span>
-              <span className="mt-0.5 text-xs text-dim">{b.format}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul
+        aria-label="Commissioned video briefs, all accepted"
+        className="mt-8 grid gap-x-6 sm:grid-cols-2 lg:col-span-7 lg:col-start-6 lg:mt-0 lg:grid-cols-3"
+      >
+        {briefs.map((b) => (
+          <li key={b.id} className="border-b border-rule py-3.5">
+            <span className="type-mono block text-muted">{b.id}</span>
+            <span className="mt-0.5 block text-[15px] font-medium">{b.title}</span>
+            <span className="block text-sm text-muted">{b.format}</span>
+            <span className="sr-only">Accepted</span>
+          </li>
+        ))}
+      </ul>
     </article>
   )
 }
 
 function AlsoInProgress({ projects }: { projects: OtherProject[] }) {
   return (
-    <div className="panel grid gap-6 p-6 lg:grid-cols-12 lg:p-8">
-      <h3 className="type-h3 lg:col-span-3">Also in progress</h3>
-      <ul className="grid gap-5 lg:col-span-9">
-        {projects.map((p) => (
-          <li
-            key={p.name}
-            id={`work-${slug(p.name)}`}
-            className="grid scroll-mt-24 gap-x-6 gap-y-1 sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto] sm:items-baseline"
-          >
-            <span className="font-semibold">{p.name}</span>
-            <span className="text-sm text-muted">{p.description}</span>
-            {p.link ? (
-              <ExternalLink href={p.link.href} className="link self-start text-sm sm:min-h-0">
-                {p.link.label}
-                <ArrowUpRight />
-              </ExternalLink>
-            ) : (
-              <span className="type-label text-dim">{p.tags.join(', ')}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="grid12 mt-20 gap-y-8 border-t-2 border-ink pt-6">
+      {projects.map((p) => (
+        <li key={p.name} id={`work-${slug(p.name)}`} className="scroll-mt-20 lg:col-span-4">
+          <h3 className="type-h3">{p.name}</h3>
+          <p className="mt-1.5 max-w-[42ch] text-[15px] text-muted">{p.description}</p>
+          {p.link && (
+            <ExternalLink href={p.link.href} className="link mt-1 text-[15px]">
+              {p.link.label}
+              <ArrowUpRight />
+            </ExternalLink>
+          )}
+        </li>
+      ))}
+    </ul>
   )
 }

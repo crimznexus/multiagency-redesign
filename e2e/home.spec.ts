@@ -5,7 +5,7 @@ const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']
 
 test('home renders the headline', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('The AI-native agency that shows its work.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Build agencies\s*together\./)
 })
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
@@ -21,10 +21,15 @@ test('no horizontal overflow on a small phone', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0)
 })
 
-test('the only thing that loops is the live-dot ping', async ({ page }) => {
+test('nothing on the page loops', async ({ page }) => {
   await page.goto('/')
-  const names = await page.evaluate(() => document.getAnimations().map((a) => (a as CSSAnimation).animationName))
-  expect(names.every((n) => n === 'ping')).toBe(true)
+  const looping = await page.evaluate(() =>
+    document
+      .getAnimations()
+      .filter((a) => a.effect?.getComputedTiming().iterations === Number.POSITIVE_INFINITY)
+      .map((a) => (a as CSSAnimation).animationName),
+  )
+  expect(looping).toEqual([])
 })
 
 test.describe('project console', () => {
@@ -37,7 +42,7 @@ test.describe('project console', () => {
     await expect(tabs.nth(1)).toBeFocused()
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
     const panel = page.getByRole('tabpanel')
-    await expect(panel).toHaveAccessibleName(/Bots & automation/)
+    await expect(panel).toHaveAccessibleName(/Bots/)
     await expect(panel.getByText('Conversation flows, tool integrations, reply drafts.')).toBeVisible()
   })
 
@@ -57,24 +62,16 @@ test('the comparison is a real table on desktop', async ({ page, isMobile }) => 
   await expect(table.getByRole('rowheader')).toHaveCount(5)
 })
 
-test('four services, each linking to real work on the page', async ({ page }) => {
+test('the console covers all four kinds of project', async ({ page }) => {
   await page.goto('/')
-  const section = page.getByRole('region', { name: 'What you can hire us for' })
-  await expect(section.getByRole('heading', { level: 3 })).toHaveText([
-    'Product & web',
-    'Bots & automation',
-    'Content & video',
-    'Social & community',
-  ])
-  const hrefs = await section.locator('a[href^="#work-"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))
-  expect(hrefs.length).toBeGreaterThanOrEqual(4)
-  for (const href of new Set(hrefs)) await expect(page.locator(href as string)).toHaveCount(1)
+  const tabs = page.getByRole('tablist', { name: 'Choose a kind of project' }).getByRole('tab')
+  await expect(tabs).toHaveText(['Product', 'Bots', 'Video', 'Social'])
 })
 
 test.describe('work', () => {
   test('featured projects, safe external links, reserved image sizes', async ({ page }) => {
     await page.goto('/')
-    const work = page.getByRole('region', { name: 'Shipped, live, and on the record' })
+    const work = page.getByRole('region', { name: /Selected work/ })
     await expect(work.getByRole('heading', { level: 3 }).first()).toHaveText('Ping')
     for (const link of await work.locator('a[target="_blank"]').all()) {
       await expect(link).toHaveAttribute('rel', /noopener/)
@@ -107,7 +104,7 @@ test('open books: monthly figures add up to the payout total', async ({ page }) 
 
 test('FAQ answers are all visible without toggles', async ({ page }) => {
   await page.goto('/')
-  const faq = page.getByRole('region', { name: 'Questions, answered' })
+  const faq = page.getByRole('region', { name: /Questions, answered/ })
   await expect(faq.getByRole('term')).toHaveCount(6)
   await expect(faq.getByText(/A vetted specialist from the MultiAgency network/)).toBeVisible()
 })
@@ -117,7 +114,7 @@ test('one label for the contact intent, and a skip link', async ({ page }) => {
   const labels = await page
     .locator('a[href="https://multiagency.ai/contact"]')
     .evaluateAll((as) => [...new Set(as.map((a) => a.textContent?.trim()))])
-  expect(labels).toEqual(['Start a project'])
+  expect(labels).toEqual(['Hire us'])
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
 })
@@ -141,7 +138,7 @@ test('mobile menu opens as a compact panel and closes on navigation', async ({ p
   const menu = page.getByRole('navigation', { name: 'Menu' })
   await expect(menu).toBeVisible()
   expect((await menu.boundingBox())?.height).toBeLessThan(420)
-  await menu.getByRole('link', { name: 'Services' }).click()
+  await menu.getByRole('link', { name: 'Work' }).click()
   await expect(menu).toBeHidden()
 })
 
