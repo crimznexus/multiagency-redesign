@@ -1,3 +1,5 @@
+import { LogoMark } from './Logo'
+
 export const CONTACT_URL = 'https://multiagency.ai/contact'
 /** One label for the contact intent, everywhere on the page. */
 export const CONTACT_LABEL = 'Hire us'
@@ -20,8 +22,7 @@ export function SiteHeader() {
       </a>
       <div className="page flex h-16 items-center justify-between gap-3 sm:gap-6">
         <a href="/" aria-label="MultiAgency home" className="flex min-h-11 items-center gap-2.5">
-          {/* The mark: a filled square, the one piece of yellow in the nav. */}
-          <span aria-hidden="true" className="size-3.5 bg-signal outline outline-ink" />
+          <LogoMark className="size-5 shrink-0" />
           <span className="text-[17px] font-semibold tracking-[-0.02em]">MultiAgency</span>
         </a>
 
