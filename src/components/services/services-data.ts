@@ -7,6 +7,8 @@
 export interface Service {
   id: string
   name: string
+  /** One-word tab label in the project console */
+  short: string
   summary: string
   aiDrafts: string
   peopleOwn: string
@@ -21,6 +23,7 @@ export interface Service {
 export const services: Service[] = [
   {
     id: 'product',
+    short: 'Product',
     tagline: 'Sites, apps and features',
     brief: 'A checkout that takes card or Cash App and pays out on any chain.',
     name: 'Product & web',
@@ -35,6 +38,7 @@ export const services: Service[] = [
   },
   {
     id: 'bots',
+    short: 'Bots',
     tagline: 'Telegram, Discord, your tools',
     brief: 'A Telegram assistant that answers our builders and points them to open projects.',
     name: 'Bots & automation',
@@ -48,6 +52,7 @@ export const services: Service[] = [
   },
   {
     id: 'content',
+    short: 'Video',
     tagline: 'Explainers and launches',
     brief: 'A 60-second release video for our 1.2 launch, with captions.',
     name: 'Content & video',
@@ -58,6 +63,7 @@ export const services: Service[] = [
   },
   {
     id: 'social',
+    short: 'Social',
     tagline: 'Posts, replies, community',
     brief: 'Three posts a week that sound like us, plus replies to our community.',
     name: 'Social & community',

@@ -20,7 +20,7 @@ const faqs: { q: string; a: ReactNode }[] = [
       <>
         It depends on the brief. Tell us what you’re making and we’ll come back with a scoped first draft of the brief
         and a quote.{' '}
-        <a href={CONTACT_URL} className="text-cream underline underline-offset-4 hover:decoration-signal">
+        <a href={CONTACT_URL} className="underline decoration-rule underline-offset-4 hover:decoration-ink">
           {CONTACT_LABEL}
         </a>
         .
@@ -36,7 +36,7 @@ const faqs: { q: string; a: ReactNode }[] = [
     a: (
       <>
         Yes. The network is open to specialists in product, bots, video and social.{' '}
-        <a href={APPLY_URL} className="text-cream underline underline-offset-4 hover:decoration-signal">
+        <a href={APPLY_URL} className="underline decoration-rule underline-offset-4 hover:decoration-ink">
           Apply to join
         </a>
         .
@@ -51,16 +51,16 @@ const faqs: { q: string; a: ReactNode }[] = [
  */
 export function Faq() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="page scroll-mt-20 py-section">
-      <div className="grid gap-x-12 gap-y-10 lg:grid-cols-12">
+    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-16 border-t border-rule">
+      <div className="page grid12 py-section">
         <h2 id="faq-title" className="type-h2 lg:col-span-4">
-          Questions, answered
+          Questions, answered.
         </h2>
-        <dl className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:col-span-8">
+        <dl className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:col-span-7 lg:col-start-6 lg:mt-0">
           {faqs.map((f) => (
             <div key={f.q}>
-              <dt className="font-semibold tracking-[-0.01em]">{f.q}</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-muted">{f.a}</dd>
+              <dt className="text-[17px] font-semibold tracking-[-0.01em]">{f.q}</dt>
+              <dd className="mt-2 text-[15px] leading-relaxed text-muted">{f.a}</dd>
             </div>
           ))}
         </dl>
