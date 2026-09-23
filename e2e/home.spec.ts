@@ -10,6 +10,10 @@ test('home renders the headline', async ({ page }) => {
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
+  // Measure the settled page: mid-fade, the hero's text is part-transparent and reads as low contrast.
+  await page.waitForFunction(() =>
+    document.getAnimations().every((a) => (a as CSSAnimation).animationName !== 'rise' || a.playState === 'finished'),
+  )
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze()
   expect(results.violations).toEqual([])
 })
@@ -114,11 +118,29 @@ test('open books: monthly figures add up to the payout total', async ({ page }) 
   expect(counts.reduce((sum, c) => sum + Number(c), 0)).toBe(total)
 })
 
-test('FAQ answers are all visible without toggles', async ({ page }) => {
+test('FAQ answers slide open and closed from their questions', async ({ page }) => {
   await page.goto('/')
   const faq = page.getByRole('region', { name: /Questions, answered/ })
-  await expect(faq.getByRole('term')).toHaveCount(6)
-  await expect(faq.getByText(/A vetted specialist from the MultiAgency network/)).toBeVisible()
+  const questions = faq.getByRole('button')
+  await expect(questions).toHaveCount(6)
+  for (const q of await questions.all()) await expect(q).toHaveAttribute('aria-expanded', 'false')
+
+  const who = faq.getByRole('button', { name: 'Who actually does the work?' })
+  const answer = faq.getByText(/A vetted specialist from the MultiAgency network/)
+  await expect(answer).not.toBeInViewport()
+  await who.click()
+  await expect(who).toHaveAttribute('aria-expanded', 'true')
+  await expect(answer).toBeVisible()
+  await expect(answer).toBeInViewport()
+  await who.press('Enter')
+  await expect(who).toHaveAttribute('aria-expanded', 'false')
+})
+
+test('closed FAQ answers cannot be tabbed into', async ({ page }) => {
+  await page.goto('/')
+  const hire = page.locator('#faq a[href="/contact"]')
+  await expect(hire).toHaveCount(1)
+  expect(await hire.evaluate((a) => a.closest('[inert]') !== null)).toBe(true)
 })
 
 test('one label for the contact intent, and a skip link', async ({ page }) => {

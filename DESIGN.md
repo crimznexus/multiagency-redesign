@@ -74,7 +74,7 @@ Rules:
 | 3 | Comparison | Why us | Table (desktop) / one block per row (phone) |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
 | 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
-| 6 | FAQ | Remove doubt | Heading left, two-column Q&A, all open |
+| 6 | FAQ | Remove doubt | Heading left, one-column list of questions that slide open |
 | 7 | Footer | Navigate | Wordmark at poster scale, one row of links |
 
 Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open books" and "Agency template". The hero has none, and no section is numbered.
@@ -120,7 +120,9 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - An ink command line with a copy button that reports "Copied" for 1.6s, then what the template ships as a 2 by 2 ruled list.
 
 ### FAQ
-- Heading left, two-column definition list, every answer visible. **(taste: accordion removed.)**
+- Heading left; on the right, one ruled list of questions under a 2px ink rule, every answer closed. **(Client request: compact over all-open; supersedes the taste-skill "no accordion" call.)**
+- Each question is a full-width button (`aria-expanded`, `aria-controls`) with a square toggle on the right: hairline when closed, ink-filled when open, the plus turning 45° into a close mark. Any number can be open at once.
+- The answer slides: grid rows animate `0fr` → `1fr` with a fade, 300ms on `--ease-ui`, so height follows the content without measuring. Closed answers are `inert`, so their links can't be tabbed into. Reduced motion makes it instant.
 
 ### Form pages (`/contact`, `/apply`)
 - Both share one layout (`FormPage`) and one form kit (`form-kit.tsx`), so they cannot drift apart. `/apply` asks what the applicant does best, name and email, an optional NEAR account and portfolio link, and a few sentences on their work, and keeps the live site's "browse open work on NEARN" link under its steps.
