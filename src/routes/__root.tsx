@@ -37,23 +37,20 @@ function RootComponent() {
 }
 
 /**
- * First-paint colours, before any stylesheet arrives. The meta tells the
- * browser the page has a dark scheme, so its default canvas is not white; the
- * inline rule paints the exact paper. Without these, a slow stylesheet (the
- * dev server serves it separately) shows a white frame in dark mode.
- * The two theme-color tags (the phone browser's toolbar) live here too:
- * head() keeps one meta per name, so it would drop the light one.
- * Keep all these values in step with --color-bg in app.css.
+ * First-paint colour, before any stylesheet arrives. The page is dark only:
+ * the meta makes the browser's own canvas dark, and the inline rule paints
+ * the exact background, so no frame is ever white, whatever serves the CSS.
+ * theme-color tints the phone browser's toolbar to match.
+ * Keep these in step with --color-bg in app.css.
  */
-const firstPaint = 'html{background:#f3f3f0}@media (prefers-color-scheme:dark){html{background:#13120e}}'
+const firstPaint = 'html{background:#13120e}'
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <head>
-        <meta name="color-scheme" content="light dark" />
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F3F0" />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#13120E" />
+        <meta name="color-scheme" content="dark" />
+        <meta name="theme-color" content="#13120E" />
         <style>{firstPaint}</style>
         <HeadContent />
       </head>

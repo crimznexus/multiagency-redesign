@@ -9,7 +9,7 @@
 - **Brand source:** multiagency.ai: near-black, cream, electric yellow for primary actions; "Open books, open source, open doors".
 - **Clean-up pass: taste-skill** (`npx skills add Leonxlnx/taste-skill`, installed locally, not committed). Ran `redesign-existing-projects` (scan, diagnose, targeted fixes) and the `design-taste-frontend` pre-flight check. Design read: *agency landing for NEAR-ecosystem teams, dark product-grade language after CULTD / reply.cash, redesign mode "preserve"*. Dials: `DESIGN_VARIANCE 6`, `MOTION_INTENSITY 4`, `VISUAL_DENSITY 4`. Changes it drove are marked **(taste)** below.
 - **Rejected earlier directions:** paper + red pencil with an autoplaying hero; a banknote/security-print page. Both were editorial and descriptive; the brief wants product-grade and demonstrative.
-- **Direction change (this revision):** the dark control-room page was replaced by a **modernist (Swiss International Style)** landing page, designed first in Claude Design and then implemented here. Mentality: a strict 12-column grid, flush-left grotesk type at poster scale, sharp corners, rules instead of cards, one accent. The brand yellow, the content and the live ledger plumbing were kept; the cream-on-near-black surface became an off-white paper with a dark mode.
+- **Direction change (this revision):** the dark control-room page was replaced by a **modernist (Swiss International Style)** landing page, designed first in Claude Design and then implemented here. Mentality: a strict 12-column grid, flush-left grotesk type at poster scale, sharp corners, rules instead of cards, one accent. The brand yellow, the content and the live ledger plumbing were kept; the surface became an off-white paper, then (after a light-to-dark flash on load) dark only: the near-black ground the brand started from.
 - Dials for the modernist revision: `DESIGN_VARIANCE 6`, `MOTION_INTENSITY 4`, `VISUAL_DENSITY 4`.
 
 ## 1. Atmosphere & Identity
@@ -20,20 +20,20 @@ A printed specimen sheet for an agency, not a dashboard. Everything sits on one 
 
 ## 2. Color
 
-One ink, one paper, one accent. Light is the canonical mode; dark swaps four surface tokens so the yellow reads identically in both. Tokens in `src/styles/app.css` `@theme`, dark values under `@media (prefers-color-scheme: dark)`.
+One ink, one ground, one accent. **The page is dark only**: there is no light mode, so no frame can ever paint in light colours (a light-to-dark flash on load was the reason). Tokens in `src/styles/app.css` `@theme`; `color-scheme: dark`, a `color-scheme` meta, an inline `html` background and `theme-color` in the document head make the very first frame and the phone toolbar dark too.
 
-| Role | Token | Light | Dark | Usage |
-|---|---|---|---|---|
-| Paper | `--color-bg` | #F3F3F0 | #13120E | Page background |
-| Ink | `--color-ink` | #15140F | #EEEDE6 | Headlines, body, 2px rules, the open pipeline row |
-| Muted | `--color-muted` | #57564E | #A9A69B | Secondary copy, labels (at least 6.5:1 in both modes) |
-| Rule | `--color-rule` | ink at 14% | paper at 14% | Hairlines between rows and sections |
-| Surface | `--color-surface` | #E8E8E3 | #1F1E19 | Hover fills, image frames |
-| Accent | `--color-signal` | #F3E11B | #F3E11B | Primary CTA, the AI chip, the MultiAgency column, the logo square |
-| On accent | `--color-on-signal` | #15140F | #15140F | Text on yellow (15:1) |
+| Role | Token | Value | Usage |
+|---|---|---|---|
+| Ground | `--color-bg` | #13120E | Page background |
+| Ink | `--color-ink` | #EEEDE6 | Headlines, body, 2px rules, the terminal panel |
+| Muted | `--color-muted` | #A9A69B | Secondary copy, labels (at least 6.5:1 on the ground) |
+| Rule | `--color-rule` | ink at 14% | Hairlines between rows and sections |
+| Surface | `--color-surface` | #1F1E19 | Hover fills, image frames, the active work row |
+| Accent | `--color-signal` | #F3E11B | Primary CTA, the AI chip, the MultiAgency column, the logo square |
+| On accent | `--color-on-signal` | #15140F | Text on yellow (15:1) |
 
 Rules:
-- The yellow never carries text on paper; it is always a fill with ink on top.
+- The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
 - No shadows, no gradients, no glows. Depth comes from rules and fills.
 

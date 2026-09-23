@@ -21,16 +21,16 @@
 
 /*
  * Tokens mirror DESIGN.md. Add a token there before adding it here.
- * Light is the canonical mode; the dark values below swap the four surface
- * tokens only, so the brand yellow reads the same in both.
+ * The page is dark only: one set of values, no light mode to fall back to,
+ * so no frame can ever paint in light colours.
  */
 @theme {
   --color-*: initial;
-  --color-bg: #f3f3f0;
-  --color-ink: #15140f;
-  --color-muted: #57564e;
-  --color-rule: rgb(21 20 15 / 0.14);
-  --color-surface: #e8e8e3;
+  --color-bg: #13120e;
+  --color-ink: #eeede6;
+  --color-muted: #a9a69b;
+  --color-rule: rgb(238 237 230 / 0.14);
+  --color-surface: #1f1e19;
   --color-signal: #f3e11b;
   --color-on-signal: #15140f;
   --color-black: #000;
@@ -54,17 +54,7 @@
 
 @layer base {
   :root {
-    color-scheme: light dark;
-  }
-  /* One page theme, two modes: only the surface tokens change (DESIGN.md §2). */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-bg: #13120e;
-      --color-ink: #eeede6;
-      --color-muted: #a9a69b;
-      --color-rule: rgb(238 237 230 / 0.14);
-      --color-surface: #1f1e19;
-    }
+    color-scheme: dark;
   }
 
   html {

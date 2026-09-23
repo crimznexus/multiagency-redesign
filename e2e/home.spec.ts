@@ -168,11 +168,19 @@ test('the page never shifts while loading (CLS)', async ({ page }) => {
   expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02)
 })
 
-test('the browser toolbar and first paint match the page in both modes', async ({ page }) => {
-  await page.goto('/')
-  const themes = await page
-    .locator('meta[name="theme-color"]')
-    .evaluateAll((ms) => ms.map((m) => `${m.getAttribute('media')} ${m.getAttribute('content')}`))
-  expect(themes).toEqual(['(prefers-color-scheme: light) #F3F3F0', '(prefers-color-scheme: dark) #13120E'])
-  await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'light dark')
+test.describe('dark only', () => {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(`paints dark from the first frame with a ${colorScheme} system theme`, async ({ browser }) => {
+      const page = await browser.newPage({ colorScheme })
+      await page.goto('/', { waitUntil: 'commit' })
+      await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark')
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#13120E')
+      const bg = (sel: string) =>
+        page.evaluate((s) => getComputedStyle(document.querySelector(s) as Element).backgroundColor, sel)
+      expect(await bg('html')).toBe('rgb(19, 18, 14)')
+      await page.waitForLoadState('load')
+      expect(await bg('body')).toBe('rgb(19, 18, 14)')
+      await page.close()
+    })
+  }
 })
