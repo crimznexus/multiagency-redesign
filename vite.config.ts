@@ -24,7 +24,14 @@ export default defineConfig({
     tanstackStart({
       // The landing page is content that changes rarely: ship it as static HTML
       // and hydrate. Live ledger figures are fetched client-side on top.
-      prerender: { enabled: true, crawlLinks: true, failOnError: true },
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+        failOnError: true,
+        // A section link ("/#work") is the same page, not a new one. Crawled as pages, each
+        // was written over index.html, and on Linux one of those writes came out empty.
+        filter: ({ path }) => !path.includes('#'),
+      },
       // 8 KB of CSS: inline it rather than spend a render-blocking round-trip on it.
       server: { build: { inlineCss: true } },
     }),
