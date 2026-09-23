@@ -1,12 +1,12 @@
 import type { LedgerResult } from '~/server/ledger'
-import { ProjectTerminal } from './console/ProjectTerminal'
+import { ProjectPipeline } from './console/ProjectPipeline'
 import { HeroVideo } from './HeroVideo'
 import { APPLY_LABEL, APPLY_URL, CONTACT_LABEL, CONTACT_URL } from './SiteHeader'
 import { ArrowRight } from './ui/icons'
 
 /**
  * Split hero: the headline, the value prop and the two CTAs take the left
- * seven columns, and the pipeline terminal (a real, working piece of the
+ * seven columns, and the pipeline graph (a real, working piece of the
  * product) takes the right. Four text elements, nothing else (DESIGN.md §5).
  * Behind them, full bleed, a looping dot-matrix video (HeroVideo).
  */
@@ -46,7 +46,7 @@ export function Hero({ ledger }: { ledger: LedgerResult }) {
           id="how-it-works"
           className="rise scroll-mt-20 [animation-delay:160ms] md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8"
         >
-          <ProjectTerminal payments={ledger.payments} />
+          <ProjectPipeline payments={ledger.payments} />
         </div>
       </div>
     </section>

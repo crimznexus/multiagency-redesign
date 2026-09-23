@@ -12,7 +12,9 @@ test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
   // Measure the settled page: mid-fade, the hero's text is part-transparent and reads as low contrast.
   await page.waitForFunction(() =>
-    document.getAnimations().every((a) => (a as CSSAnimation).animationName !== 'rise' || a.playState === 'finished'),
+    document
+      .getAnimations()
+      .every((a) => !/^(rise|pg-)/.test((a as CSSAnimation).animationName) || a.playState === 'finished'),
   )
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze()
   expect(results.violations).toEqual([])
@@ -25,7 +27,7 @@ test('no horizontal overflow on a small phone', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0)
 })
 
-test('no animation loops (the hero video is the one loop)', async ({ page }) => {
+test('no animation loops (the video is the one loop)', async ({ page }) => {
   await page.goto('/')
   const looping = await page.evaluate(() =>
     document
@@ -86,10 +88,12 @@ test.describe('project console', () => {
     await expect(steps.filter({ hasText: 'owned by AI' })).toHaveCount(1)
   })
 
-  test('the terminal types the pipeline out in full', async ({ page }) => {
+  test('the graph draws all six steps, with one AI node', async ({ page }) => {
     await page.goto('/')
-    const draft = page.getByRole('tabpanel').locator('[aria-hidden="true"]').getByText('Draft', { exact: true })
-    await expect(draft).toBeVisible({ timeout: 10_000 })
+    const graph = page.getByRole('tabpanel').locator('[aria-hidden="true"]')
+    for (const step of ['Brief', 'Draft', 'Build', 'Review', 'Accept', 'Paid'])
+      await expect(graph.getByText(step, { exact: true })).toBeVisible({ timeout: 10_000 })
+    await expect(graph.getByText('AI', { exact: true })).toHaveCount(1)
   })
 })
 

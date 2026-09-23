@@ -226,6 +226,57 @@
     opacity: 0;
   }
 }
+/* The pipeline graph (ProjectPipeline). Final state by default, so reduced motion shows the finished graph. */
+/* No non-scaling-stroke: it makes Chrome measure dashes in screen pixels, not in pathLength units. */
+.pg-track,
+.pg-line,
+.pg-spark {
+  fill: none;
+}
+.pg-track {
+  stroke: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  stroke-width: 1.75;
+}
+.pg-line {
+  stroke: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  stroke-width: 1.75;
+  stroke-dasharray: 1;
+}
+/* A short yellow dash that rides the tip of the line as it draws, then runs off the end. */
+.pg-spark {
+  stroke: var(--color-signal);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 0.04 1.2;
+  stroke-dashoffset: -1.1;
+  opacity: 0;
+}
+@keyframes pg-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes pg-spark {
+  from {
+    stroke-dashoffset: 0.04;
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+}
+@keyframes pg-pop {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+@keyframes pg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
 /* The phone menu sheet settles in under the header. */
 @keyframes menu-in {
   from {
@@ -245,6 +296,20 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* 2.2s to draw six steps at an even pace (linear, like the node stagger), so each node lights as the spark reaches it. */
+  .pg-line {
+    animation: pg-draw 2.2s linear 0.15s backwards;
+  }
+  .pg-spark {
+    animation: pg-spark 2.2s linear 0.15s backwards;
+  }
+  .pg-node {
+    animation: pg-pop 450ms var(--ease-ui) backwards;
+    animation-delay: calc(0.15s + var(--i) * 0.4s);
+  }
+  .pg-note {
+    animation: pg-fade 500ms var(--ease-ui) 2.1s backwards;
+  }
   .rise {
     /* backwards, not both: a fill that outlives the fade makes Chrome treat the element as a backdrop root,
        and the frosted terminal inside would blur nothing. */

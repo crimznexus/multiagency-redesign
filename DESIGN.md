@@ -16,7 +16,7 @@
 
 A printed specimen sheet for an agency, not a dashboard. Everything sits on one grid: big type, big numbers, hairline rules, and a single yellow that only marks actions and the one AI step. Two differentiators are shown, never just claimed: **who does what** (AI drafts, a named person owns the result) and **where the money goes** (every payout is public on NEAR).
 
-**Signature:** the *project console* in the hero: pick a kind of project and the six-step pipeline re-routes, one step marked AI, the last one paid on-chain. Second moment: *Open books*, where the payout count and the monthly bars are read from the chain.
+**Signature:** the *pipeline graph* in the hero: pick a kind of project and the six-step pipeline re-routes, one step marked AI, the last one paid on-chain. Second moment: *Open books*, where the payout count and the monthly bars are read from the chain.
 
 ## 2. Color
 
@@ -25,7 +25,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 | Role | Token | Value | Usage |
 |---|---|---|---|
 | Ground | `--color-bg` | #000000 | Page background, under a film grain (see §7) |
-| Ink | `--color-ink` | #EEEDE6 | Headlines, body, 2px rules, the terminal panel |
+| Ink | `--color-ink` | #EEEDE6 | Headlines, body, 2px rules, the pipeline graph |
 | Muted | `--color-muted` | #A9A69B | Secondary copy, labels (at least 6.5:1 on the ground) |
 | Rule | `--color-rule` | ink at 14% | Hairlines between rows and sections |
 | Surface | `--color-surface` | #1F1E19 | Hover fills, image frames, the active work row |
@@ -35,7 +35,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 Rules:
 - The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
-- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the terminal and the scrolled header.
+- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the pipeline graph and the scrolled header.
 
 ## 3. Typography
 
@@ -44,7 +44,7 @@ Rules:
 
 | Level | Class | Size | Weight | Line height | Tracking | Usage |
 |---|---|---|---|---|---|---|
-| Display | `type-display` | clamp(2.75rem, 1.1rem + 7vw, 9.25rem) | 600 | 0.9 | -0.052em | Hero H1; at `lg` it drops to clamp(4rem, 0.5rem + 5.4vw, 6.75rem) to sit beside the terminal |
+| Display | `type-display` | clamp(2.75rem, 1.1rem + 7vw, 9.25rem) | 600 | 0.9 | -0.052em | Hero H1; at `lg` it drops to clamp(4rem, 0.5rem + 5.4vw, 6.75rem) to sit beside the pipeline graph |
 | H2 | `type-h2` | clamp(2.125rem, 1.4rem + 2.9vw, 4rem) | 600 | 1.0 | -0.04em | Section heads |
 | H3 | `type-h3` | 1.25rem | 500 | 1.25 | -0.02em | Project and card titles |
 | Numeral | `type-num` | clamp(3.5rem, 1.9rem + 6.4vw, 8rem) | 600 | 0.95 | -0.055em | The books, the brief count |
@@ -69,7 +69,7 @@ Rules:
 
 | # | Section | Job | Layout family |
 |---|---|---|---|
-| 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
+| 1 | Hero + pipeline graph | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
 | 3 | Comparison | Why us | 4/8 split: argument beside a tight table; on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
@@ -98,22 +98,23 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 - Floating and sticky, 72px, with no bar of its own: the hero pulls up behind it (`-mt-18 pt-18`), so the video runs to the top of the page.
 - From `md`, one centred row: the mark in a light glass circle (40 to 46px), a white pill of links (Home, Work, Open books, Template, FAQ), and "Hire us" as a dark pill (#28282a, text #c8c8c8; lifts 1px on hover). All three carry one soft shadow, `0 4px 14px rgb(0 0 0/0.16)`.
 - The current link is #2e2e2e with three 3px dots under it; the rest are #6b6b6b (the reference's 50% opacity fails contrast). On the home page the dots follow the section crossing the middle of the viewport, and sit under Home above the first one.
-- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into the terminal's dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The "Hire us" pill and the phone menu button start from dark glass (#28282a at 72%) instead of white.
+- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into the pipeline panel's dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The "Hire us" pill and the phone menu button start from dark glass (#28282a at 72%) instead of white.
 - Phones: the mark left and a round dark menu button right, both 48px. The menu is a popover covering the screen (black at 60%, 6px blur) with the mark and a white close button above it, and a white sheet (28px radius) of the same links, then "Hire us" as a full-width dark pill and "Apply to join". Tapping the dimmed area, Esc or a link closes it.
 
 ### The loop (hero video and footer wordmark) **(client decision: final)**
 - One piece of footage for the whole site: dark dunes under a violet sky, digits falling through it, with film grain (10 s, loops). It is the motionsites.ai reference clip, a Higgsfield generation. It is **self-hosted**, not hotlinked from the reference's CloudFront URL, so the site never depends on someone else's account.
 - `public/hero/`: `loop.webm` (VP9, ~300 KB) and `loop.mp4` (H.264, ~380 KB), re-encoded at 720p from the 13.8 MB 1080p original, plus `loop-poster.webp` (the first frame, 52 KB). One component plays it everywhere: `LoopVideo`.
 - The poster paints first (preloaded on `/`; it is the LCP element). The video loads only after hydration (`preload="none"`): at once in the hero, and on scroll into view in the footer. Each pauses out of view.
-- Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the terminal side and glows through its frosted glass.
+- Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the pipeline side and glows through its frosted glass.
 - Footer: the wordmark is filled with it. White-on-black type set to `mix-blend-mode: multiply` sits over the video, so the footage shows only through the letters and the black around them is the page. It is cropped to the band of sky and digits (`object-position: 50% 22%`) and clipped by a pixel at the bottom so no hairline shows.
 - It is the only thing that loops. Reduced motion and Save-Data keep the still poster. **Accepted debt:** there is no pause button (client request), so WCAG 2.2.2 (pause, stop, hide) is met only through reduced motion.
 
-### Project console (signature)
-- A terminal, adapted from Aceternity UI's Terminal: a frosted-glass panel (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline) with light text, so the hero video glows through it blurred; square corners, no shadow, no sound. The hero's fade uses `backwards` fill, because a held fill makes Chrome treat the wrapper as a backdrop root and the blur would show nothing. Its title bar holds three square window marks and a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active.
-- Picking a tab types out that project's pipeline in mono: `brief` (echoing the example brief), then `run`, with the six steps as one line each (step, owner chip, a terse note). The full step detail lives in the hidden list, so the panel stays shorter than the hero text. Every line is laid out from the first frame and revealed in place, so nothing shifts. The cursor is a steady block (nothing loops); reduced motion shows the finished transcript.
-- The typed transcript is `aria-hidden`; a visually hidden ordered list carries the same six steps.
-- The AI chip is the only yellow in the panel: one step of six, visible at a glance.
+### Pipeline graph (signature, `ProjectPipeline`) **(client request: replaces the terminal)**
+- A frosted-glass panel (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline) with light text, so the hero video glows through it blurred; square corners. The hero's fade uses `backwards` fill, because a held fill makes Chrome treat the wrapper as a backdrop root and the blur would show nothing.
+- Top: a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active, and "6 steps · 1 AI" in mono when there is room. Then the example brief in mono.
+- The graph: the six steps (Brief, Draft, Build, Review, Accept, Paid) as nodes on one smooth curve (Catmull-Rom through fixed points in a 2:1 box), labels alternating below and above with the owner in mono under each name. Nodes are hollow ink rings; the AI node is the only yellow: a filled dot with a soft glow and a yellow AI chip. Under it, one line: "AI drafts <that service's first two drafts>. People do the rest."
+- Motion, on load and on every tab change: the line draws itself in 2.2s at an even pace, a short yellow spark rides its tip and runs off the end, and each node pops in (opacity and scale, 450ms) as the spark reaches it, 0.4s apart; the note fades in last. It plays once, nothing loops. Styles are `.pg-*` in `app.css`: the final state is the default, so reduced motion shows the finished graph. Dashes use `pathLength=1`, without `non-scaling-stroke` (which makes Chrome measure dashes in pixels).
+- The graph is `aria-hidden`; a visually hidden ordered list carries the six steps with full detail and owner, and the brief is real text.
 
 ### Comparison
 - Five rows, two or three words per cell, so it reads at a glance. From `lg` the heading and one-line argument sit in 4 columns beside the table (8 columns); below `lg` they stack above it.
@@ -162,14 +163,14 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 | Type | Duration | Easing | Usage |
 |---|---|---|---|
 | Micro | 150 to 200ms | cubic-bezier(0.4, 0, 0.2, 1) | Hover fill and colour, button press |
-| Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, terminal (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
+| Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, pipeline graph (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
 | Scroll | scroll-driven | linear | Bars draw up as the chart enters (`animation-timeline: view()`, progressive enhancement) |
 
 Rules: only `opacity` and `transform` animate. Layout never changes after first paint: both fonts are preloaded, and the font stacks are pinned in the base layer (see `app.css`) so no stylesheet order can swap them. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
 
 ## 7. Depth & Surface
 
-Almost no depth. Rules separate content inside a section and fills mark state; **sections have no dividers between them**, only space (client request). The whole page sits under a static film grain (`body::after`: fixed, 11% opacity, one 160px tile of SVG fractal noise, under the header at z-30) so the black sections share the loop's texture. The only elevation is frosted glass (terminal, scrolled header).
+Almost no depth. Rules separate content inside a section and fills mark state; **sections have no dividers between them**, only space (client request). The whole page sits under a static film grain (`body::after`: fixed, 11% opacity, one 160px tile of SVG fractal noise, under the header at z-30) so the black sections share the loop's texture. The only elevation is frosted glass (pipeline graph, scrolled header).
 
 ## 8. Accessibility Constraints & Accepted Debt
 

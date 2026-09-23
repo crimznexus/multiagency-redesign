@@ -21,7 +21,7 @@ export const Route = createRootRoute({
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [
-      // Both faces are in the first screen (the headline, and the terminal beside it). Preloading
+      // Both faces are in the first screen (the headline, and the pipeline graph beside it). Preloading
       // lets them beat first paint, so text never re-wraps when a font swaps in.
       { rel: 'preload', href: geistLatin, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
       { rel: 'preload', href: geistMono, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
