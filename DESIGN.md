@@ -71,11 +71,13 @@ Rules:
 |---|---|---|---|
 | 1 | Hero + pipeline graph | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
-| 3 | Comparison | Why us | 4/8 split: argument beside a tight table; on phones the same table, marks only for the other two columns |
+| 3 | Comparison | Why us | Table left (7 cols), argument right (4 cols); on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
-| 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
+| 5 | Agency template | Second audience (founders) | Command line and what it ships left (6 cols), argument right (5 cols) |
 | 6 | FAQ | Remove doubt | Heading left, one-column list of questions that slide open |
 | 7 | Footer | Navigate | Wordmark at poster scale, one row of links (desktop), two labelled link columns (phone) |
+
+**Alternating sides (client request):** from Open books down, the words swap sides section by section on desktop: Open books left, Comparison right, Our work left (the list, with the preview right), Agency template right, FAQ left. Swapped sections move with `lg:col-start` and `lg:row-start-1`, not by reordering the markup, so on phones every section still reads words first.
 
 Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open books" and "Agency template". The hero has none, and no section is numbered.
 
