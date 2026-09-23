@@ -29,10 +29,7 @@ export function Hero({ ledger }: { ledger: LedgerResult }) {
             the rest.
           </p>
           <div className="rise flex flex-wrap gap-3 [animation-delay:80ms]">
-            <a
-              href={CONTACT_URL}
-              className="btn btn-signal rounded-full px-6 shadow-[0_0_0_1px_rgb(243_225_27/0.15),0_0_22px_rgb(243_225_27/0.18)]"
-            >
+            <a href={CONTACT_URL} className="btn btn-signal btn-lit rounded-full px-6">
               {CONTACT_LABEL}
               <ArrowRight />
             </a>

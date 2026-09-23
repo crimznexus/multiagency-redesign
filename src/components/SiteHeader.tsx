@@ -83,7 +83,7 @@ function useActive() {
 
 /**
  * A floating header: the mark in a white circle, the links in a white pill,
- * and "Hire us" as a dark pill. It takes no bar of its own, so the hero's
+ * and "Hire us" as the hero's yellow pill. It takes no bar of its own, so the hero's
  * video runs up behind it. At the top it is light frosted glass; as the page
  * scrolls it deepens, step by step with the scroll, into dark glass, and
  * lightens again on the way back up. Phones get the mark, a round menu
@@ -130,7 +130,7 @@ export function SiteHeader() {
 
         <a
           href={CONTACT_URL}
-          className="hdr-dark hidden h-[clamp(44px,5.2vw,48px)] shrink-0 items-center rounded-full px-6 text-[clamp(13px,1.4vw,15px)] font-medium transition-[translate] hover:-translate-y-px md:flex"
+          className="btn btn-signal btn-lit hidden h-[clamp(44px,5.2vw,48px)] min-h-0 shrink-0 rounded-full px-6 text-[clamp(13px,1.4vw,15px)] md:inline-flex"
         >
           {CONTACT_LABEL}
         </a>
@@ -206,10 +206,7 @@ export function SiteHeader() {
                 </a>
               )
             })}
-            <a
-              href={CONTACT_URL}
-              className="mt-3 flex min-h-12 items-center justify-center rounded-full bg-[#28282a] text-[16px] font-medium text-white focus-visible:outline-[#111]"
-            >
+            <a href={CONTACT_URL} className="btn btn-signal mt-3 rounded-full focus-visible:outline-[#111]">
               {CONTACT_LABEL}
             </a>
             <a

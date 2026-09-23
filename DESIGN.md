@@ -87,10 +87,10 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 
 ### Button (`.btn` + `.btn-signal` | `.btn-ghost`, `.btn-sm`)
 - 48px min height (40 for `btn-sm`), padding-x 20px, 1px ink border, Geist 500 16px.
-- Signal: yellow fill, ink text; hover inverts to an ink fill with paper text; active: translateY(1px).
-- Ghost: no fill, ink border; hover inverts the same way.
+- Signal: yellow fill, dark text; **hover glows** (client request): a 1px yellow ring at 40% and yellow glows of 24px and 56px, eased over 250ms. `.btn-lit` adds a faint resting glow (a 1px ring at 15%, a 22px glow at 18%) for the pills that sit on the video. Active: translateY(1px).
+- Ghost: no fill, ink border; hover brightens the border to full ink and adds a soft paper glow. Nothing inverts.
 - Focus-visible: 2px ink outline, 3px offset.
-- **Hero pills (client request):** the hero's two buttons are fully rounded. "Hire us" keeps the yellow fill with a soft yellow glow (a 1px ring at 15% and a 22px glow at 18%); "Apply to join" is a ghost pill on a 40% ink border with a light backdrop blur. Hover still inverts. Buttons elsewhere stay square.
+- **Hero pills (client request):** the hero's two buttons are fully rounded. "Hire us" is a lit yellow pill (`.btn-lit`); "Apply to join" is a ghost pill on a 40% ink border with a light backdrop blur. Both glow on hover. Buttons elsewhere stay square.
 - **One label per intent (taste):** contact is always "Hire us" (`CONTACT_LABEL`), joining is always "Apply to join", the template is always "Register interest".
 
 ### Skip link (`.skip-link`)
@@ -98,10 +98,10 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 
 ### Header
 - Floating and sticky, 72px, with no bar of its own: the hero pulls up behind it (`-mt-18 pt-18`), so the video runs to the top of the page.
-- From `md`, one centred row: the mark in a light glass circle (40 to 46px), a white pill of links (Home, Work, Open books, Template, FAQ), and "Hire us" as a dark pill (#28282a, text #c8c8c8; lifts 1px on hover). All three carry one soft shadow, `0 4px 14px rgb(0 0 0/0.16)`.
+- From `md`, one centred row: the mark in a light glass circle (40 to 46px), a white pill of links (Home, Work, Open books, Template, FAQ), and "Hire us" as the hero's lit yellow pill, the same yellow at every scroll depth, glowing on hover. The mark and the links carry one soft shadow, `0 4px 14px rgb(0 0 0/0.16)`, that fades as the glass deepens.
 - The current link is #2e2e2e with three 3px dots under it; the rest are #6b6b6b (the reference's 50% opacity fails contrast). On the home page the dots follow the section crossing the middle of the viewport, and sit under Home above the first one.
-- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The "Hire us" pill and the phone menu button start from dark glass (#28282a at 72%) instead of white.
-- Phones: the mark left and a round dark menu button right, both 48px. The menu is a popover covering the screen (black at 60%, 6px blur) with the mark and a white close button above it, and a white sheet (28px radius) of the same links, then "Hire us" as a full-width dark pill and "Apply to join". Tapping the dimmed area, Esc or a link closes it.
+- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The phone menu button starts from dark glass (#28282a at 72%) instead of white; "Hire us" stays yellow throughout.
+- Phones: the mark left and a round dark menu button right, both 48px. The menu is a popover covering the screen (black at 60%, 6px blur) with the mark and a white close button above it, and a white sheet (28px radius) of the same links, then "Hire us" as a full-width yellow pill and "Apply to join". Tapping the dimmed area, Esc or a link closes it.
 
 ### The loop (hero video and footer wordmark) **(client decision: final)**
 - One piece of footage for the whole site: dark dunes under a violet sky, digits falling through it, with film grain (10 s, loops). It is the motionsites.ai reference clip, a Higgsfield generation. It is **self-hosted**, not hotlinked from the reference's CloudFront URL, so the site never depends on someone else's account.

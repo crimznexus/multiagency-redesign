@@ -150,18 +150,37 @@
   .btn {
     @apply inline-flex min-h-12 items-center justify-center gap-2.5 border border-ink px-5 text-base font-medium whitespace-nowrap text-ink;
     transition:
-      background-color 200ms var(--ease-ui),
-      color 200ms var(--ease-ui),
+      box-shadow 250ms var(--ease-ui),
+      border-color 250ms var(--ease-ui),
       transform 150ms var(--ease-ui);
   }
   .btn:active {
     transform: translateY(1px);
   }
+  /* Hover glows rather than inverting (client request): the button keeps its colours and lights up. */
   .btn-signal {
-    @apply border-signal bg-signal text-on-signal hover:border-ink hover:bg-ink hover:text-bg;
+    @apply border-signal bg-signal text-on-signal;
   }
-  .btn-ghost {
-    @apply hover:bg-ink hover:text-bg;
+  /* A faint glow at rest, for the pills that sit on the video; hover (below) turns it up. */
+  .btn-signal.btn-lit {
+    box-shadow:
+      0 0 0 1px rgb(243 225 27 / 0.15),
+      0 0 22px rgb(243 225 27 / 0.18);
+  }
+  .btn-signal:hover,
+  .btn-signal:focus-visible {
+    box-shadow:
+      0 0 0 1px rgb(243 225 27 / 0.4),
+      0 0 24px rgb(243 225 27 / 0.5),
+      0 0 56px rgb(243 225 27 / 0.22);
+  }
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible {
+    border-color: var(--color-ink);
+    box-shadow:
+      0 0 0 1px rgb(238 237 230 / 0.2),
+      0 0 22px rgb(238 237 230 / 0.28),
+      0 0 48px rgb(238 237 230 / 0.1);
   }
   .btn-sm {
     @apply min-h-10 px-4 text-[15px];
