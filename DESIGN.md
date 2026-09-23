@@ -24,7 +24,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 
 | Role | Token | Value | Usage |
 |---|---|---|---|
-| Ground | `--color-bg` | #13120E | Page background |
+| Ground | `--color-bg` | #000000 | Page background, under a film grain (see §7) |
 | Ink | `--color-ink` | #EEEDE6 | Headlines, body, 2px rules, the terminal panel |
 | Muted | `--color-muted` | #A9A69B | Secondary copy, labels (at least 6.5:1 on the ground) |
 | Rule | `--color-rule` | ink at 14% | Hairlines between rows and sections |
@@ -35,7 +35,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 Rules:
 - The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
-- No shadows, no gradients, no glows. Depth comes from rules and fills.
+- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the terminal and the scrolled header.
 
 ## 3. Typography
 
@@ -69,7 +69,7 @@ Rules:
 
 | # | Section | Job | Layout family |
 |---|---|---|---|
-| 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones |
+| 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
 | 3 | Comparison | Why us | 4/8 split: argument beside a tight table; on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
@@ -81,23 +81,36 @@ Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open 
 
 ## 5. Components
 
-Shape rule (one documented system): **nothing is rounded.** Every control, chip, image frame and fill has square corners.
+Shape rule (one documented system): **nothing is rounded**, except the header. Every control, chip, image frame and fill has square corners; the header's circles and pills and the hero's two buttons are the deliberate exceptions **(client request: header as in the motionsites.ai reference)**.
 
 ### Button (`.btn` + `.btn-signal` | `.btn-ghost`, `.btn-sm`)
 - 48px min height (40 for `btn-sm`), padding-x 20px, 1px ink border, Geist 500 16px.
 - Signal: yellow fill, ink text; hover inverts to an ink fill with paper text; active: translateY(1px).
 - Ghost: no fill, ink border; hover inverts the same way.
 - Focus-visible: 2px ink outline, 3px offset.
+- **Hero pills (client request):** the hero's two buttons are fully rounded. "Hire us" keeps the yellow fill with a soft yellow glow (a 1px ring at 15% and a 22px glow at 18%); "Apply to join" is a ghost pill on a 40% ink border with a light backdrop blur. Hover still inverts. Buttons elsewhere stay square.
 - **One label per intent (taste):** contact is always "Hire us" (`CONTACT_LABEL`), joining is always "Apply to join", the template is always "Register interest".
 
 ### Skip link (`.skip-link`)
 - First focusable element; hidden above the viewport until focused. **(taste)**
 
 ### Header
-- 64px, sticky, one hairline under it. Wordmark with a yellow square; four links at `md` and up; "Hire us"; a popover menu below `md`.
+- Floating and sticky, 72px, with no bar of its own: the hero pulls up behind it (`-mt-18 pt-18`), so the video runs to the top of the page.
+- From `md`, one centred row: the mark in a white circle (40 to 46px), a white pill of links (Home, Work, Open books, Template, FAQ), and "Hire us" as a dark pill (#28282a, text #c8c8c8; lifts 1px on hover). All three carry one soft shadow, `0 4px 14px rgb(0 0 0/0.16)`.
+- The current link is #2e2e2e with three 3px dots under it; the rest are #6b6b6b (the reference's 50% opacity fails contrast). On the home page the dots follow the section crossing the middle of the viewport, and sit under Home above the first one.
+- **On scroll:** past 24px every piece turns to frosted glass (the terminal's: black at 35%, 24px blur, a 15% ink hairline, light text, dots in ink), easing over 500ms; back at the top it returns to solid. Content passing under it blurs.
+- Phones: the mark left and a round dark menu button right, both 48px. The menu is a popover covering the screen (black at 60%, 6px blur) with the mark and a white close button above it, and a white sheet (28px radius) of the same links, then "Hire us" as a full-width dark pill and "Apply to join". Tapping the dimmed area, Esc or a link closes it.
+
+### The loop (hero video and footer wordmark) **(client decision: final)**
+- One piece of footage for the whole site: dark dunes under a violet sky, digits falling through it, with film grain (10 s, loops). It is the motionsites.ai reference clip, a Higgsfield generation. It is **self-hosted**, not hotlinked from the reference's CloudFront URL, so the site never depends on someone else's account.
+- `public/hero/`: `loop.webm` (VP9, ~300 KB) and `loop.mp4` (H.264, ~380 KB), re-encoded at 720p from the 13.8 MB 1080p original, plus `loop-poster.webp` (the first frame, 52 KB). One component plays it everywhere: `LoopVideo`.
+- The poster paints first (preloaded on `/`; it is the LCP element). The video loads only after hydration (`preload="none"`): at once in the hero, and on scroll into view in the footer. Each pauses out of view.
+- Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the terminal side and glows through its frosted glass.
+- Footer: the wordmark is filled with it. White-on-black type set to `mix-blend-mode: multiply` sits over the video, so the footage shows only through the letters and the black around them is the page. It is cropped to the band of sky and digits (`object-position: 50% 22%`) and clipped by a pixel at the bottom so no hairline shows.
+- It is the only thing that loops. Reduced motion and Save-Data keep the still poster. **Accepted debt:** there is no pause button (client request), so WCAG 2.2.2 (pause, stop, hide) is met only through reduced motion.
 
 ### Project console (signature)
-- A terminal, adapted from Aceternity UI's Terminal: an ink panel (it inverts to paper in dark mode), square corners, no shadow, no sound. Its title bar holds three square window marks and a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active.
+- A terminal, adapted from Aceternity UI's Terminal: a frosted-glass panel (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline) with light text, so the hero video glows through it blurred; square corners, no shadow, no sound. The hero's fade uses `backwards` fill, because a held fill makes Chrome treat the wrapper as a backdrop root and the blur would show nothing. Its title bar holds three square window marks and a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active.
 - Picking a tab types out that project's pipeline in mono: `brief` (echoing the example brief), then `run`, with the six steps as one line each (step, owner chip, a terse note). The full step detail lives in the hidden list, so the panel stays shorter than the hero text. Every line is laid out from the first frame and revealed in place, so nothing shifts. The cursor is a steady block (nothing loops); reduced motion shows the finished transcript.
 - The typed transcript is `aria-hidden`; a visually hidden ordered list carries the same six steps.
 - The AI chip is the only yellow in the panel: one step of six, visible at a glance.
@@ -135,7 +148,7 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
 
 ### Footer
-- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`.
+- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`, filled with the loop (see above).
 - From `md`: one row, the links left and the treasury account in mono right.
 - Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 
@@ -144,7 +157,7 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 
 ## 6. Motion & Interaction
 
-`MOTION_INTENSITY 4`: one entrance, one scroll-driven chart, and state feedback. **Nothing loops** (enforced by an e2e test).
+`MOTION_INTENSITY 4`: one entrance, one scroll-driven chart, and state feedback. **Nothing loops** (enforced by an e2e test) except the loop (hero and footer wordmark), which stays still under reduced motion **(client request: more spice)**.
 
 | Type | Duration | Easing | Usage |
 |---|---|---|---|
@@ -156,7 +169,7 @@ Rules: only `opacity` and `transform` animate. Layout never changes after first 
 
 ## 7. Depth & Surface
 
-There is no depth. The page is flat paper: rules separate content, fills mark state, and the only elevation is the ink fill on an open pipeline row or the yellow on the column that matters.
+Almost no depth. Rules separate content inside a section and fills mark state; **sections have no dividers between them**, only space (client request). The whole page sits under a static film grain (`body::after`: fixed, 11% opacity, one 160px tile of SVG fractal noise, under the header at z-30) so the black sections share the loop's texture. The only elevation is frosted glass (terminal, scrolled header).
 
 ## 8. Accessibility Constraints & Accepted Debt
 

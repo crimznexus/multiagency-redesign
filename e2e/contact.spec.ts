@@ -9,8 +9,10 @@ const fill = async (page: import('@playwright/test').Page) => {
   await page.getByLabel('The brief').fill('A launch video for our 2.0 release, about a minute long, with captions.')
 }
 
-test('every Hire us link leads to our own contact page', async ({ page }) => {
+test('every Hire us link leads to our own contact page', async ({ page, isMobile }) => {
   await page.goto('/')
+  // On phones the header's "Hire us" lives in the menu.
+  if (isMobile) await page.getByRole('button', { name: 'Menu' }).click()
   await page.getByRole('banner').getByRole('link', { name: 'Hire us' }).click()
   await expect(page).toHaveURL(/\/contact$/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tell us what you need.')

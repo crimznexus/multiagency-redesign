@@ -46,14 +46,14 @@ function RootComponent() {
  * theme-color tints the phone browser's toolbar to match.
  * Keep these in step with --color-bg in app.css.
  */
-const firstPaint = 'html{background:#13120e}'
+const firstPaint = 'html{background:#000}'
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <head>
         <meta name="color-scheme" content="dark" />
-        <meta name="theme-color" content="#13120E" />
+        <meta name="theme-color" content="#000000" />
         <style>{firstPaint}</style>
         <HeadContent />
       </head>

@@ -14,7 +14,7 @@ const issue = [
 
 export function AgencyTemplate() {
   return (
-    <section id="template" aria-labelledby="template-title" className="scroll-mt-16 border-t border-rule">
+    <section id="template" aria-labelledby="template-title" className="scroll-mt-16">
       <div className="page grid12 py-section">
         <div className="lg:col-span-5">
           <p className="type-label mb-5 text-muted">Agency template</p>

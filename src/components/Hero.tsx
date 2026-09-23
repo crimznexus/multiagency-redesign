@@ -1,5 +1,6 @@
 import type { LedgerResult } from '~/server/ledger'
 import { ProjectTerminal } from './console/ProjectTerminal'
+import { HeroVideo } from './HeroVideo'
 import { APPLY_LABEL, APPLY_URL, CONTACT_LABEL, CONTACT_URL } from './SiteHeader'
 import { ArrowRight } from './ui/icons'
 
@@ -7,11 +8,13 @@ import { ArrowRight } from './ui/icons'
  * Split hero: the headline, the value prop and the two CTAs take the left
  * seven columns, and the pipeline terminal (a real, working piece of the
  * product) takes the right. Four text elements, nothing else (DESIGN.md §5).
+ * Behind them, full bleed, a looping dot-matrix video (HeroVideo).
  */
 export function Hero({ ledger }: { ledger: LedgerResult }) {
   return (
-    <section aria-labelledby="hero-title" className="page pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14">
-      <div className="grid12 items-center gap-y-12 md:grid-cols-12">
+    <section aria-labelledby="hero-title" className="relative isolate -mt-18 pt-18">
+      <HeroVideo />
+      <div className="page grid12 pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14 items-center gap-y-12 md:grid-cols-12">
         <div className="flex flex-col gap-8 md:col-span-6 lg:col-span-7">
           <h1
             id="hero-title"
@@ -26,11 +29,14 @@ export function Hero({ ledger }: { ledger: LedgerResult }) {
             the rest.
           </p>
           <div className="rise flex flex-wrap gap-3 [animation-delay:80ms]">
-            <a href={CONTACT_URL} className="btn btn-signal">
+            <a
+              href={CONTACT_URL}
+              className="btn btn-signal rounded-full px-6 shadow-[0_0_0_1px_rgb(243_225_27/0.15),0_0_22px_rgb(243_225_27/0.18)]"
+            >
               {CONTACT_LABEL}
               <ArrowRight />
             </a>
-            <a href={APPLY_URL} className="btn btn-ghost">
+            <a href={APPLY_URL} className="btn btn-ghost rounded-full border-ink/40 px-6 backdrop-blur-md">
               {APPLY_LABEL}
             </a>
           </div>

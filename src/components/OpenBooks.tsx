@@ -28,7 +28,7 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
     <section
       id="open-books"
       aria-labelledby="books-title"
-      className="scroll-mt-16 border-t border-rule [contain-intrinsic-size:auto_1100px] [content-visibility:auto]"
+      className="scroll-mt-16 [contain-intrinsic-size:auto_1100px] [content-visibility:auto]"
     >
       <div className="page grid12 py-section md:grid-cols-12">
         <div className="md:col-span-5 lg:sticky lg:top-24 lg:self-start">

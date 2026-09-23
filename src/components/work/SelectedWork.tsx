@@ -18,7 +18,7 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="scroll-mt-16 border-t border-rule [contain-intrinsic-size:auto_900px] [content-visibility:auto]"
+      className="scroll-mt-16 [contain-intrinsic-size:auto_900px] [content-visibility:auto]"
     >
       <div className="page py-section">
         <div className="flex items-end justify-between gap-6">

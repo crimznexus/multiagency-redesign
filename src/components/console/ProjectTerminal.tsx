@@ -75,7 +75,7 @@ function Command({ text }: { text: string }) {
         <span
           // biome-ignore lint/suspicious/noArrayIndexKey: words of a fixed string, never reordered
           key={i}
-          className={i === 0 ? 'font-medium' : word.startsWith('-') ? 'text-bg/60' : undefined}
+          className={i === 0 ? 'font-medium' : word.startsWith('-') ? 'text-ink/70' : undefined}
         >
           {word}
         </span>
@@ -84,8 +84,8 @@ function Command({ text }: { text: string }) {
   )
 }
 
-const Prompt = () => <span className="text-bg/60 select-none">~ $ </span>
-const Cursor = () => <span className="ml-px inline-block h-[1.1em] w-[0.6em] translate-y-[0.2em] bg-bg" />
+const Prompt = () => <span className="text-ink/70 select-none">~ $ </span>
+const Cursor = () => <span className="ml-px inline-block h-[1.1em] w-[0.6em] translate-y-[0.2em] bg-ink" />
 
 /**
  * Types out one service's pipeline. The layout is rendered in full from the
@@ -144,7 +144,7 @@ function Transcript({ lines }: { lines: Line[] }) {
         if (l.kind === 'quote') {
           return (
             // biome-ignore lint/suspicious/noArrayIndexKey: a fixed script, never reordered
-            <div key={i} className={`pl-[4ch] text-bg/60 ${shown ? '' : 'invisible'}`}>
+            <div key={i} className={`pl-[4ch] text-ink/70 ${shown ? '' : 'invisible'}`}>
               {l.text}
             </div>
           )
@@ -158,11 +158,11 @@ function Transcript({ lines }: { lines: Line[] }) {
           >
             <span className="font-medium">{step}</span>
             <span
-              className={`type-label justify-self-start px-1 text-[10px] ${owner === 'AI' ? 'bg-signal text-on-signal' : 'text-bg/60'}`}
+              className={`type-label justify-self-start px-1 text-[10px] ${owner === 'AI' ? 'bg-signal text-on-signal' : 'text-ink/70'}`}
             >
               {owner}
             </span>
-            <span className="col-span-2 text-bg/75 @xs:col-span-1">{note}</span>
+            <span className="col-span-2 text-ink/80 @xs:col-span-1">{note}</span>
           </div>
         )
       })}
@@ -179,6 +179,7 @@ function Transcript({ lines }: { lines: Line[] }) {
  * and the pipeline types itself out. One step is marked AI and carries the
  * only yellow in the panel. The typed transcript is decorative; a visually
  * hidden list carries the same six steps for assistive tech.
+ * The panel is frosted glass: the hero video shows through, blurred.
  * Adapted from Aceternity UI's Terminal (ui.aceternity.com/components/terminal).
  */
 export function ProjectTerminal({ payments }: { payments: number }) {
@@ -213,11 +214,11 @@ export function ProjectTerminal({ payments }: { payments: number }) {
   const steps = pipeline(service, payments)
 
   return (
-    <div className="@container bg-ink text-bg">
-      <div className="flex items-center gap-3.5 border-b border-bg/15 pl-3.5 sm:pl-4">
+    <div className="@container border border-ink/15 bg-bg/35 text-ink backdrop-blur-xl backdrop-saturate-150">
+      <div className="flex items-center gap-3.5 border-b border-ink/15 pl-3.5 sm:pl-4">
         <span aria-hidden="true" className="flex shrink-0 gap-1.5">
-          <span className="size-2 border border-bg/40" />
-          <span className="size-2 border border-bg/40" />
+          <span className="size-2 border border-ink/40" />
+          <span className="size-2 border border-ink/40" />
           <span className="size-2 bg-signal" />
         </span>
         <div
@@ -241,8 +242,8 @@ export function ProjectTerminal({ payments }: { payments: number }) {
                 aria-controls="console-panel"
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActive(i)}
-                className={`-mb-px min-h-11 border-b-2 pt-2.5 pb-2 text-[13px] font-medium whitespace-nowrap transition-colors focus-visible:outline-bg focus-visible:-outline-offset-2 ${
-                  selected ? 'border-bg text-bg' : 'border-transparent text-bg/60 hover:text-bg'
+                className={`-mb-px min-h-11 border-b-2 pt-2.5 pb-2 text-[13px] font-medium whitespace-nowrap transition-colors focus-visible:outline-ink focus-visible:-outline-offset-2 ${
+                  selected ? 'border-ink text-ink' : 'border-transparent text-ink/70 hover:text-ink'
                 }`}
               >
                 {s.short}
@@ -250,7 +251,7 @@ export function ProjectTerminal({ payments }: { payments: number }) {
             )
           })}
         </div>
-        <span aria-hidden="true" className="hidden pr-4 type-mono text-[11.5px] text-bg/60 sm:block">
+        <span aria-hidden="true" className="hidden pr-4 type-mono text-[11.5px] text-ink/70 sm:block">
           bash
         </span>
       </div>

@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']
 
@@ -25,7 +25,7 @@ test('no horizontal overflow on a small phone', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0)
 })
 
-test('nothing on the page loops', async ({ page }) => {
+test('no animation loops (the hero video is the one loop)', async ({ page }) => {
   await page.goto('/')
   const looping = await page.evaluate(() =>
     document
@@ -34,6 +34,33 @@ test('nothing on the page loops', async ({ page }) => {
       .map((a) => (a as CSSAnimation).animationName),
   )
   expect(looping).toEqual([])
+})
+
+test.describe('hero video', () => {
+  const video = (page: Page) =>
+    page.locator('#main video').evaluate((v: HTMLVideoElement) => ({ paused: v.paused, loaded: v.readyState > 0 }))
+
+  test('plays after load, with no controls of its own', async ({ page }) => {
+    await page.goto('/')
+    await expect.poll(async () => (await video(page)).paused).toBe(false)
+    await expect(page.getByRole('button', { name: /background video/ })).toHaveCount(0)
+  })
+
+  test('fills the footer wordmark, loading only once scrolled to', async ({ page }) => {
+    await page.goto('/')
+    const footer = page.locator('footer video')
+    const state = () => footer.evaluate((v: HTMLVideoElement) => ({ paused: v.paused, loaded: v.readyState > 0 }))
+    expect(await state()).toEqual({ paused: true, loaded: false })
+    await footer.scrollIntoViewIfNeeded()
+    await expect.poll(async () => (await state()).paused).toBe(false)
+  })
+
+  test('stays a still poster, never downloaded, under reduced motion', async ({ browser }) => {
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    await page.goto('/', { waitUntil: 'networkidle' })
+    expect(await video(page)).toEqual({ paused: true, loaded: false })
+    await page.close()
+  })
 })
 
 test.describe('project console', () => {
@@ -203,12 +230,12 @@ test.describe('dark only', () => {
       const page = await browser.newPage({ colorScheme })
       await page.goto('/', { waitUntil: 'commit' })
       await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark')
-      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#13120E')
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#000000')
       const bg = (sel: string) =>
         page.evaluate((s) => getComputedStyle(document.querySelector(s) as Element).backgroundColor, sel)
-      expect(await bg('html')).toBe('rgb(19, 18, 14)')
+      expect(await bg('html')).toBe('rgb(0, 0, 0)')
       await page.waitForLoadState('load')
-      expect(await bg('body')).toBe('rgb(19, 18, 14)')
+      expect(await bg('body')).toBe('rgb(0, 0, 0)')
       await page.close()
     })
   }

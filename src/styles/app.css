@@ -28,7 +28,7 @@
  */
 @theme {
   --color-*: initial;
-  --color-bg: #13120e;
+  --color-bg: #000000;
   --color-ink: #eeede6;
   --color-muted: #a9a69b;
   --color-rule: rgb(238 237 230 / 0.14);
@@ -75,6 +75,17 @@
   body {
     @apply bg-bg font-sans text-base text-ink antialiased;
     overflow-x: clip;
+  }
+  /* Film grain over the whole page, so the black sections share the hero video's texture. A fixed layer
+     under the header (z-40): one 160px tile of fractal noise, static, never repainted on scroll. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0.11;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   /* Modernist grid: nothing is rounded, so no element opts back in. */
   h1,
@@ -182,6 +193,18 @@
     opacity: 0;
   }
 }
+/* The phone menu sheet settles in under the header. */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
 @keyframes grow {
   from {
     transform: scaleY(0);
@@ -190,7 +213,9 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .rise {
-    animation: rise 500ms var(--ease-ui) both;
+    /* backwards, not both: a fill that outlives the fade makes Chrome treat the element as a backdrop root,
+       and the frosted terminal inside would blur nothing. */
+    animation: rise 500ms var(--ease-ui) backwards;
   }
   /* Bars draw themselves as the chart scrolls in, where the browser supports it. */
   @supports (animation-timeline: view()) {

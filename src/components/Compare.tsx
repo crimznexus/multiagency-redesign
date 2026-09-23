@@ -56,7 +56,7 @@ const rows: { label: string; cells: [Cell, Cell, Cell] }[] = [
  */
 export function Compare() {
   return (
-    <section id="compare" aria-labelledby="compare-title" className="scroll-mt-16 border-t border-rule">
+    <section id="compare" aria-labelledby="compare-title" className="scroll-mt-16">
       <div className="page grid12 items-start py-[clamp(3.5rem,9vw,7.5rem)]">
         <div className="lg:col-span-4">
           <h2 id="compare-title" className="type-h2 max-w-[14ch]">
