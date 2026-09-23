@@ -3,7 +3,7 @@ import { LogoMark } from './Logo'
 export const CONTACT_URL = '/contact'
 /** One label for the contact intent, everywhere on the page. */
 export const CONTACT_LABEL = 'Hire us'
-export const APPLY_URL = 'https://multiagency.ai/apply'
+export const APPLY_URL = '/apply'
 export const APPLY_LABEL = 'Apply to join'
 export const REGISTER_URL = 'https://multiagency.ai/register'
 

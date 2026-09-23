@@ -2,6 +2,7 @@
  * Hire-us inquiries: the fields and the one validator shared by the form (in
  * the browser) and /api/contact (on the server).
  */
+import { done, EMAIL, type FieldErrors as Errors, oneOf, str, type Validated } from './forms'
 
 export const KINDS = ['Product', 'Bots', 'Video', 'Social', 'Something else'] as const
 export type Kind = (typeof KINDS)[number]
@@ -15,21 +16,17 @@ export interface Inquiry {
 }
 
 export type Field = keyof Inquiry
-export type FieldErrors = Partial<Record<Field, string>>
+export type FieldErrors = Errors<Field>
 
 export const LIMITS = { name: 100, email: 200, company: 120, message: 4000, messageMin: 20 } as const
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
-
 /** Normalises untrusted input; returns the inquiry or the errors to show beside each field. */
-export function validateInquiry(raw: Record<string, unknown>): { inquiry: Inquiry } | { errors: FieldErrors } {
+export function validateInquiry(raw: Record<string, unknown>): Validated<Inquiry, Field> {
   const inquiry: Inquiry = {
     name: str(raw.name),
     email: str(raw.email),
     company: str(raw.company),
-    kind: (KINDS as readonly string[]).includes(str(raw.kind)) ? (str(raw.kind) as Kind) : '',
+    kind: oneOf(KINDS, raw.kind),
     message: str(raw.message),
   }
   const errors: FieldErrors = {}
@@ -41,5 +38,9 @@ export function validateInquiry(raw: Record<string, unknown>): { inquiry: Inquir
   if (inquiry.message.length < LIMITS.messageMin)
     errors.message = `A sentence or two, at least ${LIMITS.messageMin} characters.`
   else if (inquiry.message.length > LIMITS.message) errors.message = `Keep it under ${LIMITS.message} characters.`
-  return Object.keys(errors).length > 0 ? { errors } : { inquiry }
+  return done(inquiry, errors)
 }
+
+/** The one-line summary a webhook shows for an inquiry. */
+export const summariseInquiry = (i: Inquiry) =>
+  `New inquiry from ${i.company ? `${i.name} (${i.company})` : i.name} <${i.email}>${i.kind ? ` · ${i.kind}` : ''}\n\n${i.message}`

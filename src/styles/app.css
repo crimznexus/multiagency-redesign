@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Tooling pages (the work illustrations) are not part of the site: never scan them. */
+@source not "../../scripts";
 
 /*
  * Self-hosted, subset variable fonts (rebuild with `npm run subset:font`).
@@ -21,16 +23,16 @@
 
 /*
  * Tokens mirror DESIGN.md. Add a token there before adding it here.
- * Light is the canonical mode; the dark values below swap the four surface
- * tokens only, so the brand yellow reads the same in both.
+ * The page is dark only: one set of values, no light mode to fall back to,
+ * so no frame can ever paint in light colours.
  */
 @theme {
   --color-*: initial;
-  --color-bg: #f3f3f0;
-  --color-ink: #15140f;
-  --color-muted: #57564e;
-  --color-rule: rgb(21 20 15 / 0.14);
-  --color-surface: #e8e8e3;
+  --color-bg: #13120e;
+  --color-ink: #eeede6;
+  --color-muted: #a9a69b;
+  --color-rule: rgb(238 237 230 / 0.14);
+  --color-surface: #1f1e19;
   --color-signal: #f3e11b;
   --color-on-signal: #15140f;
   --color-black: #000;
@@ -54,17 +56,16 @@
 
 @layer base {
   :root {
-    color-scheme: light dark;
-  }
-  /* One page theme, two modes: only the surface tokens change (DESIGN.md §2). */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-bg: #13120e;
-      --color-ink: #eeede6;
-      --color-muted: #a9a69b;
-      --color-rule: rgb(238 237 230 / 0.14);
-      --color-surface: #1f1e19;
-    }
+    color-scheme: dark;
+    /*
+     * The fonts again, one layer up. In dev, TanStack Start's first stylesheet
+     * appends a second Tailwind build with the default theme after ours, in
+     * the same theme layer, so its system-font stacks would win until the real
+     * stylesheet arrives and the text would re-wrap. The base layer beats the
+     * theme layer whatever the order. Keep in step with @theme above.
+     */
+    --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
   }
 
   html {
@@ -172,11 +173,13 @@
   line-height: 1.4;
 }
 
-/* Hero load-in: one staggered reveal, nothing loops (DESIGN.md §6). */
+/*
+ * Hero load-in: one staggered fade, nothing loops (DESIGN.md §6). Opacity
+ * only: nothing moves on load, so a reload never looks like a layout jump.
+ */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
   }
 }
 @keyframes grow {
@@ -187,7 +190,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .rise {
-    animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise 500ms var(--ease-ui) both;
   }
   /* Bars draw themselves as the chart scrolls in, where the browser supports it. */
   @supports (animation-timeline: view()) {

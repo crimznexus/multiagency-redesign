@@ -9,7 +9,7 @@
 - **Brand source:** multiagency.ai: near-black, cream, electric yellow for primary actions; "Open books, open source, open doors".
 - **Clean-up pass: taste-skill** (`npx skills add Leonxlnx/taste-skill`, installed locally, not committed). Ran `redesign-existing-projects` (scan, diagnose, targeted fixes) and the `design-taste-frontend` pre-flight check. Design read: *agency landing for NEAR-ecosystem teams, dark product-grade language after CULTD / reply.cash, redesign mode "preserve"*. Dials: `DESIGN_VARIANCE 6`, `MOTION_INTENSITY 4`, `VISUAL_DENSITY 4`. Changes it drove are marked **(taste)** below.
 - **Rejected earlier directions:** paper + red pencil with an autoplaying hero; a banknote/security-print page. Both were editorial and descriptive; the brief wants product-grade and demonstrative.
-- **Direction change (this revision):** the dark control-room page was replaced by a **modernist (Swiss International Style)** landing page, designed first in Claude Design and then implemented here. Mentality: a strict 12-column grid, flush-left grotesk type at poster scale, sharp corners, rules instead of cards, one accent. The brand yellow, the content and the live ledger plumbing were kept; the cream-on-near-black surface became an off-white paper with a dark mode.
+- **Direction change (this revision):** the dark control-room page was replaced by a **modernist (Swiss International Style)** landing page, designed first in Claude Design and then implemented here. Mentality: a strict 12-column grid, flush-left grotesk type at poster scale, sharp corners, rules instead of cards, one accent. The brand yellow, the content and the live ledger plumbing were kept; the surface became an off-white paper, then (after a light-to-dark flash on load) dark only: the near-black ground the brand started from.
 - Dials for the modernist revision: `DESIGN_VARIANCE 6`, `MOTION_INTENSITY 4`, `VISUAL_DENSITY 4`.
 
 ## 1. Atmosphere & Identity
@@ -20,27 +20,27 @@ A printed specimen sheet for an agency, not a dashboard. Everything sits on one 
 
 ## 2. Color
 
-One ink, one paper, one accent. Light is the canonical mode; dark swaps four surface tokens so the yellow reads identically in both. Tokens in `src/styles/app.css` `@theme`, dark values under `@media (prefers-color-scheme: dark)`.
+One ink, one ground, one accent. **The page is dark only**: there is no light mode, so no frame can ever paint in light colours (a light-to-dark flash on load was the reason). Tokens in `src/styles/app.css` `@theme`; `color-scheme: dark`, a `color-scheme` meta, an inline `html` background and `theme-color` in the document head make the very first frame and the phone toolbar dark too.
 
-| Role | Token | Light | Dark | Usage |
-|---|---|---|---|---|
-| Paper | `--color-bg` | #F3F3F0 | #13120E | Page background |
-| Ink | `--color-ink` | #15140F | #EEEDE6 | Headlines, body, 2px rules, the open pipeline row |
-| Muted | `--color-muted` | #57564E | #A9A69B | Secondary copy, labels (at least 6.5:1 in both modes) |
-| Rule | `--color-rule` | ink at 14% | paper at 14% | Hairlines between rows and sections |
-| Surface | `--color-surface` | #E8E8E3 | #1F1E19 | Hover fills, image frames |
-| Accent | `--color-signal` | #F3E11B | #F3E11B | Primary CTA, the AI chip, the MultiAgency column, the logo square |
-| On accent | `--color-on-signal` | #15140F | #15140F | Text on yellow (15:1) |
+| Role | Token | Value | Usage |
+|---|---|---|---|
+| Ground | `--color-bg` | #13120E | Page background |
+| Ink | `--color-ink` | #EEEDE6 | Headlines, body, 2px rules, the terminal panel |
+| Muted | `--color-muted` | #A9A69B | Secondary copy, labels (at least 6.5:1 on the ground) |
+| Rule | `--color-rule` | ink at 14% | Hairlines between rows and sections |
+| Surface | `--color-surface` | #1F1E19 | Hover fills, image frames, the active work row |
+| Accent | `--color-signal` | #F3E11B | Primary CTA, the AI chip, the MultiAgency column, the logo square |
+| On accent | `--color-on-signal` | #15140F | Text on yellow (15:1) |
 
 Rules:
-- The yellow never carries text on paper; it is always a fill with ink on top.
+- The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
 - No shadows, no gradients, no glows. Depth comes from rules and fills.
 
 ## 3. Typography
 
 
-**Geist Variable** for words; **Geist Mono Variable** for figures, IDs and labels. **(taste: replaces Inter + JetBrains Mono, which the skill flags as the default; Geist + Geist Mono is its recommended pairing.)** Both self-hosted and subset (12 KB + 9 KB, `npm run subset:font`); Geist is preloaded.
+**Geist Variable** for words; **Geist Mono Variable** for figures, IDs and labels. **(taste: replaces Inter + JetBrains Mono, which the skill flags as the default; Geist + Geist Mono is its recommended pairing.)** Both self-hosted and subset (12 KB + 9 KB, `npm run subset:font`); both are preloaded, since both are in the first screen.
 
 | Level | Class | Size | Weight | Line height | Tracking | Usage |
 |---|---|---|---|---|---|---|
@@ -71,11 +71,11 @@ Rules:
 |---|---|---|---|
 | 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
-| 3 | Comparison | Why us | Table (desktop) / one block per row (phone) |
+| 3 | Comparison | Why us | 4/8 split: argument beside a tight table; on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
 | 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
-| 6 | FAQ | Remove doubt | Heading left, two-column Q&A, all open |
-| 7 | Footer | Navigate | Wordmark at poster scale, one row of links |
+| 6 | FAQ | Remove doubt | Heading left, one-column list of questions that slide open |
+| 7 | Footer | Navigate | Wordmark at poster scale, one row of links (desktop), two labelled link columns (phone) |
 
 Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open books" and "Agency template". The hero has none, and no section is numbered.
 
@@ -103,8 +103,9 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - The AI chip is the only yellow in the panel: one step of six, visible at a glance.
 
 ### Comparison
-- Desktop: a real `<table>` with a 2px ink head rule. The MultiAgency column is filled yellow, so the answer reads first; losing cells in the other two columns are struck through.
-- Phone: one block per row, our answer in a yellow chip, the other two below.
+- Five rows, two or three words per cell, so it reads at a glance. From `lg` the heading and one-line argument sit in 4 columns beside the table (8 columns); below `lg` they stack above it.
+- One real `<table>` at every width, with a 2px ink head rule. The MultiAgency column is filled yellow, so the answer reads first; losing cells in the other two columns are struck through.
+- Phones: the same table, compact. The other two columns shrink to 13% each and show only their ✓ or ✗ under short headers ("Agency", "AI"); their words stay in the markup for screen readers. Our column keeps its text, so each row is one line at 390px.
 
 ### Open books
 - A status line in mono (live, or the last reading), two figures on a 2px ink rule (`type-num` capped at 4.5rem here, so they support the argument instead of outweighing it), monthly bars in ink at 112px (the current month is outlined, because it is partial), then the three most recent payouts with verify links.
@@ -120,16 +121,23 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - An ink command line with a copy button that reports "Copied" for 1.6s, then what the template ships as a 2 by 2 ruled list.
 
 ### FAQ
-- Heading left, two-column definition list, every answer visible. **(taste: accordion removed.)**
+- Heading left; on the right, one ruled list of questions under a 2px ink rule, every answer closed. **(Client request: compact over all-open; supersedes the taste-skill "no accordion" call.)**
+- Each question is a full-width button (`aria-expanded`, `aria-controls`) with a square toggle on the right: hairline when closed, ink-filled when open, the plus turning 45° into a close mark. Any number can be open at once.
+- The answer slides: grid rows animate `0fr` → `1fr` with a fade, 300ms on `--ease-ui`, so height follows the content without measuring. Closed answers are `inert`, so their links can't be tabbed into. Reduced motion makes it instant.
 
-### Contact page (`/contact`)
+### Form pages (`/contact`, `/apply`)
+- Both share one layout (`FormPage`) and one form kit (`form-kit.tsx`), so they cannot drift apart. `/apply` asks what the applicant does best, name and email, an optional NEAR account and portfolio link, and a few sentences on their work, and keeps the live site's "browse open work on NEARN" link under its steps.
+
+#### Contact page (`/contact`)
 - Every "Hire us" link lands here, never on the old site. Split like the hero: label, H2-size heading and lede, then a three-row "what happens next" list on the left; the form on the right under a 2px ink rule.
 - Fields: the kind of project as square chips (a radio group; the chosen one fills with ink), name and email side by side, company (optional), the brief with a hint line. Inputs are square, 1px ink at 40%, full ink on hover and focus.
 - Errors: validated with the same rules as the server, shown in mono under each field, the field tinted yellow at 15%, focus moved to the first. A failed send keeps the text and says so in the status line.
 - Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
 
 ### Footer
-- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`, one row of links, the treasury account in mono.
+- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`.
+- From `md`: one row, the links left and the treasury account in mono right.
+- Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 
 ### Icons
 - Phosphor (`@phosphor-icons/react/ssr`), weight "bold", one family. **(taste: hand-drawn SVG icons removed.)**
@@ -141,10 +149,10 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 | Type | Duration | Easing | Usage |
 |---|---|---|---|
 | Micro | 150 to 200ms | cubic-bezier(0.4, 0, 0.2, 1) | Hover fill and colour, button press |
-| Entrance | 900ms, staggered by 80ms | cubic-bezier(0.16, 1, 0.3, 1) | Hero headline, value prop, console (`.rise`) |
+| Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, terminal (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
 | Scroll | scroll-driven | linear | Bars draw up as the chart enters (`animation-timeline: view()`, progressive enhancement) |
 
-Rules: only `opacity` and `transform` animate. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
+Rules: only `opacity` and `transform` animate. Layout never changes after first paint: both fonts are preloaded, and the font stacks are pinned in the base layer (see `app.css`) so no stylesheet order can swap them. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
 
 ## 7. Depth & Surface
 

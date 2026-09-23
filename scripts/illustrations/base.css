@@ -11,12 +11,13 @@
     format("woff2");
 }
 :root {
-  --bg: #f3f3f0;
-  --ink: #15140f;
-  --muted: #57564e;
-  --rule: rgb(21 20 15 / 0.14);
-  --surface: #e8e8e3;
+  --bg: #13120e;
+  --ink: #eeede6;
+  --muted: #a9a69b;
+  --rule: rgb(238 237 230 / 0.14);
+  --surface: #1f1e19;
   --signal: #f3e11b;
+  --on-signal: #15140f;
 }
 * {
   box-sizing: border-box;

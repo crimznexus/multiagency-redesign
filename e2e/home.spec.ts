@@ -10,6 +10,10 @@ test('home renders the headline', async ({ page }) => {
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
+  // Measure the settled page: mid-fade, the hero's text is part-transparent and reads as low contrast.
+  await page.waitForFunction(() =>
+    document.getAnimations().every((a) => (a as CSSAnimation).animationName !== 'rise' || a.playState === 'finished'),
+  )
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze()
   expect(results.violations).toEqual([])
 })
@@ -62,12 +66,19 @@ test.describe('project console', () => {
   })
 })
 
-test('the comparison is a real table on desktop', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'phones get one card per row')
+test('the comparison is one real table at every width', async ({ page, isMobile }) => {
   await page.goto('/')
   const table = page.getByRole('table', { name: /How MultiAgency compares/ })
-  await expect(table.getByRole('columnheader')).toHaveText(['A typical agency', 'AI tools alone', 'MultiAgency'])
+  const headers = table.getByRole('columnheader')
+  await expect(headers).toHaveCount(3)
+  for (const [i, name] of ['A typical agency', 'AI tools alone', 'MultiAgency'].entries())
+    await expect(headers.nth(i)).toHaveAccessibleName(name)
   await expect(table.getByRole('rowheader')).toHaveCount(5)
+  // Phones show only the mark for the other two columns; the words are still there for screen readers.
+  const weeks = (await table.getByText('Weeks').boundingBox())?.width ?? 0
+  if (isMobile) expect(weeks).toBeLessThanOrEqual(1)
+  else expect(weeks).toBeGreaterThan(20)
+  await expect(table.getByText('Hours')).toBeVisible()
 })
 
 test('the console covers all four kinds of project', async ({ page }) => {
@@ -114,11 +125,29 @@ test('open books: monthly figures add up to the payout total', async ({ page }) 
   expect(counts.reduce((sum, c) => sum + Number(c), 0)).toBe(total)
 })
 
-test('FAQ answers are all visible without toggles', async ({ page }) => {
+test('FAQ answers slide open and closed from their questions', async ({ page }) => {
   await page.goto('/')
   const faq = page.getByRole('region', { name: /Questions, answered/ })
-  await expect(faq.getByRole('term')).toHaveCount(6)
-  await expect(faq.getByText(/A vetted specialist from the MultiAgency network/)).toBeVisible()
+  const questions = faq.getByRole('button')
+  await expect(questions).toHaveCount(6)
+  for (const q of await questions.all()) await expect(q).toHaveAttribute('aria-expanded', 'false')
+
+  const who = faq.getByRole('button', { name: 'Who actually does the work?' })
+  const answer = faq.getByText(/A vetted specialist from the MultiAgency network/)
+  await expect(answer).not.toBeInViewport()
+  await who.click()
+  await expect(who).toHaveAttribute('aria-expanded', 'true')
+  await expect(answer).toBeVisible()
+  await expect(answer).toBeInViewport()
+  await who.press('Enter')
+  await expect(who).toHaveAttribute('aria-expanded', 'false')
+})
+
+test('closed FAQ answers cannot be tabbed into', async ({ page }) => {
+  await page.goto('/')
+  const hire = page.locator('#faq a[href="/contact"]')
+  await expect(hire).toHaveCount(1)
+  expect(await hire.evaluate((a) => a.closest('[inert]') !== null)).toBe(true)
 })
 
 test('one label for the contact intent, and a skip link', async ({ page }) => {
@@ -166,4 +195,21 @@ test('the page never shifts while loading (CLS)', async ({ page }) => {
   })
   await page.goto('/', { waitUntil: 'networkidle' })
   expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02)
+})
+
+test.describe('dark only', () => {
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(`paints dark from the first frame with a ${colorScheme} system theme`, async ({ browser }) => {
+      const page = await browser.newPage({ colorScheme })
+      await page.goto('/', { waitUntil: 'commit' })
+      await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark')
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#13120E')
+      const bg = (sel: string) =>
+        page.evaluate((s) => getComputedStyle(document.querySelector(s) as Element).backgroundColor, sel)
+      expect(await bg('html')).toBe('rgb(19, 18, 14)')
+      await page.waitForLoadState('load')
+      expect(await bg('body')).toBe('rgb(19, 18, 14)')
+      await page.close()
+    })
+  }
 })
