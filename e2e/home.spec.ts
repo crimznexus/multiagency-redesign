@@ -66,12 +66,19 @@ test.describe('project console', () => {
   })
 })
 
-test('the comparison is a real table on desktop', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'phones get one card per row')
+test('the comparison is one real table at every width', async ({ page, isMobile }) => {
   await page.goto('/')
   const table = page.getByRole('table', { name: /How MultiAgency compares/ })
-  await expect(table.getByRole('columnheader')).toHaveText(['A typical agency', 'AI tools alone', 'MultiAgency'])
+  const headers = table.getByRole('columnheader')
+  await expect(headers).toHaveCount(3)
+  for (const [i, name] of ['A typical agency', 'AI tools alone', 'MultiAgency'].entries())
+    await expect(headers.nth(i)).toHaveAccessibleName(name)
   await expect(table.getByRole('rowheader')).toHaveCount(5)
+  // Phones show only the mark for the other two columns; the words are still there for screen readers.
+  const weeks = (await table.getByText('Weeks').boundingBox())?.width ?? 0
+  if (isMobile) expect(weeks).toBeLessThanOrEqual(1)
+  else expect(weeks).toBeGreaterThan(20)
+  await expect(table.getByText('Hours')).toBeVisible()
 })
 
 test('the console covers all four kinds of project', async ({ page }) => {
