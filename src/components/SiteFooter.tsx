@@ -25,13 +25,14 @@ export function SiteFooter() {
   return (
     <footer className="page pb-gutter">
       <div className="rounded-[28px] border border-ink/10 bg-[#0d0d0c] px-[clamp(1.25rem,4vw,3rem)] pt-[clamp(1.75rem,4vw,3rem)] pb-6 md:pb-8">
-        {/* Two blends. Inside this group, white type on black set to multiply leaves the video in the letters and
+        {/* Centred, then nudged left by padding-right: the tight tracking and the M and y sidebearings leave more
+            visible space on the left otherwise. Two blends. Inside this group, white type on black set to multiply leaves the video in the letters and
             black round them; the group then lightens onto the card, where black changes nothing, so no box shows.
             Clipped by a pixel at the bottom: the type's box can round short of the video's, which showed as a hairline. */}
         <div aria-hidden="true" className="relative mix-blend-lighten [clip-path:inset(0_0_1px_0)]">
           {/* Cropped to the band of sky and falling digits, the brightest part of the frame. */}
           <LoopVideo className="absolute inset-0 size-full object-cover object-[50%_22%]" />
-          <p className="relative bg-black font-semibold tracking-[-0.065em] text-[clamp(2.5rem,12vw,12.5rem)] leading-[0.9] text-white mix-blend-multiply [padding-bottom:0.06em]">
+          <p className="relative bg-black text-center font-semibold tracking-[-0.065em] text-[clamp(2.5rem,12vw,12.5rem)] leading-[0.9] text-white mix-blend-multiply [padding-bottom:0.06em] [padding-right:0.1em]">
             MultiAgency
           </p>
         </div>

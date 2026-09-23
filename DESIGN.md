@@ -154,7 +154,7 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 
 ### Footer
 - A card set apart from the page (client request): inset by the gutter on the sides and below, 28px corners, a 10% ink hairline, and a surface a shade above black (#0D0D0C).
-- The wordmark at `clamp(2.5rem, 12vw, 12.5rem)`, filled with the loop (see above).
+- The wordmark at `clamp(2.5rem, 12vw, 12.5rem)`, centred in the card and filled with the loop (see above). It is centred optically: a `padding-right` of 0.1em offsets the tight tracking and the M and y sidebearings, so the visible letters sit evenly (measured 169/167px at 1440, 57/57px at 390).
 - From `md`: one row, the links left and the treasury account in mono right.
 - Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 
