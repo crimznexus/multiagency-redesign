@@ -56,9 +56,10 @@ const rows: { label: string; cells: [Cell, Cell, Cell] }[] = [
  */
 export function Compare() {
   return (
-    <section id="compare" aria-labelledby="compare-title" className="scroll-mt-16 border-t border-rule">
+    <section id="compare" aria-labelledby="compare-title" className="scroll-mt-16">
       <div className="page grid12 items-start py-[clamp(3.5rem,9vw,7.5rem)]">
-        <div className="lg:col-span-4">
+        {/* Sections alternate from Open books down: here the words sit right and the table left (phones: words first). */}
+        <div className="lg:col-span-4 lg:col-start-9 lg:row-start-1">
           <h2 id="compare-title" className="type-h2 max-w-[14ch]">
             AI speed, without the black box.
           </h2>
@@ -67,7 +68,7 @@ export function Compare() {
           </p>
         </div>
 
-        <table className="mt-8 w-full table-fixed border-collapse text-left md:mt-10 lg:col-span-8 lg:mt-0">
+        <table className="mt-8 w-full table-fixed border-collapse text-left md:mt-10 lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:mt-0">
           <caption className="sr-only">How MultiAgency compares with a typical agency and AI tools alone</caption>
           <colgroup>
             <col className="w-[31%] md:w-[24%]" />

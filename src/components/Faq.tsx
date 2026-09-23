@@ -62,7 +62,7 @@ export function Faq() {
     })
 
   return (
-    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-16 border-t border-rule">
+    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-16">
       <div className="page grid12 py-section">
         <h2 id="faq-title" className="type-h2 lg:col-span-4">
           Questions, answered.

@@ -28,7 +28,7 @@
  */
 @theme {
   --color-*: initial;
-  --color-bg: #13120e;
+  --color-bg: #000000;
   --color-ink: #eeede6;
   --color-muted: #a9a69b;
   --color-rule: rgb(238 237 230 / 0.14);
@@ -76,6 +76,17 @@
     @apply bg-bg font-sans text-base text-ink antialiased;
     overflow-x: clip;
   }
+  /* Film grain over the whole page, so the black sections share the hero video's texture. A fixed layer
+     under the header (z-40): one 160px tile of fractal noise, static, never repainted on scroll. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0.11;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   /* Modernist grid: nothing is rounded, so no element opts back in. */
   h1,
   h2 {
@@ -94,6 +105,39 @@
 }
 
 @layer components {
+  /* The header's glass, driven by scroll. SiteHeader sets --p from 0 (top of the page) to 1 (200px down):
+     light frosted glass deepens into the terminal's dark glass as the page moves. Text flips from dark to
+     light over the middle of that range (--t), where the glass is mid-grey, so it never sits on a matching
+     tone for long. */
+  .hdr {
+    --p: 0;
+    --t: clamp(0, (var(--p) - 0.35) * 3.3, 1);
+    --hdr-glass: color-mix(in srgb, var(--color-bg) 35%, transparent);
+    --dot: color-mix(in srgb, #111 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  .hdr-surface,
+  .hdr-dark {
+    border: 1px solid color-mix(in srgb, var(--color-ink) calc(var(--p) * 15%), transparent);
+    box-shadow: 0 4px 14px rgb(0 0 0 / calc(0.16 - var(--p) * 0.16));
+    -webkit-backdrop-filter: blur(calc(6px + var(--p) * 18px)) saturate(calc(1.15 + var(--p) * 0.35));
+    backdrop-filter: blur(calc(6px + var(--p) * 18px)) saturate(calc(1.15 + var(--p) * 0.35));
+  }
+  .hdr-surface {
+    background-color: color-mix(in srgb, rgb(255 255 255 / 0.7) calc(100% - var(--p) * 100%), var(--hdr-glass));
+    color: color-mix(in srgb, #111 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  .hdr-dark {
+    background-color: color-mix(in srgb, rgb(40 40 42 / 0.72) calc(100% - var(--p) * 100%), var(--hdr-glass));
+    color: color-mix(in srgb, #d4d4d4 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  /* Links not current: a step quieter than the pill's text, still AA on the lightest glass. */
+  .hdr-link {
+    color: color-mix(in srgb, #444 calc(100% - var(--t) * 100%), color-mix(in srgb, var(--color-ink) 72%, transparent));
+  }
+  .hdr-link:hover,
+  .hdr-link[aria-current] {
+    color: inherit;
+  }
   .page {
     @apply mx-auto w-full max-w-page px-gutter;
   }
@@ -106,18 +150,37 @@
   .btn {
     @apply inline-flex min-h-12 items-center justify-center gap-2.5 border border-ink px-5 text-base font-medium whitespace-nowrap text-ink;
     transition:
-      background-color 200ms var(--ease-ui),
-      color 200ms var(--ease-ui),
+      box-shadow 250ms var(--ease-ui),
+      border-color 250ms var(--ease-ui),
       transform 150ms var(--ease-ui);
   }
   .btn:active {
     transform: translateY(1px);
   }
+  /* Hover glows rather than inverting (client request): the button keeps its colours and lights up. */
   .btn-signal {
-    @apply border-signal bg-signal text-on-signal hover:border-ink hover:bg-ink hover:text-bg;
+    @apply border-signal bg-signal text-on-signal;
   }
-  .btn-ghost {
-    @apply hover:bg-ink hover:text-bg;
+  /* A faint glow at rest, for the pills that sit on the video; hover (below) turns it up. */
+  .btn-signal.btn-lit {
+    box-shadow:
+      0 0 0 1px rgb(243 225 27 / 0.15),
+      0 0 22px rgb(243 225 27 / 0.18);
+  }
+  .btn-signal:hover,
+  .btn-signal:focus-visible {
+    box-shadow:
+      0 0 0 1px rgb(243 225 27 / 0.4),
+      0 0 24px rgb(243 225 27 / 0.5),
+      0 0 56px rgb(243 225 27 / 0.22);
+  }
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible {
+    border-color: var(--color-ink);
+    box-shadow:
+      0 0 0 1px rgb(238 237 230 / 0.2),
+      0 0 22px rgb(238 237 230 / 0.28),
+      0 0 48px rgb(238 237 230 / 0.1);
   }
   .btn-sm {
     @apply min-h-10 px-4 text-[15px];
@@ -182,6 +245,66 @@
     opacity: 0;
   }
 }
+/* The pipeline graph (ProjectPipeline). Final state by default, so reduced motion shows the finished graph. */
+/* No non-scaling-stroke: it makes Chrome measure dashes in screen pixels, not in pathLength units. */
+.pg-track,
+.pg-line,
+.pg-spark {
+  fill: none;
+}
+.pg-track {
+  stroke: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  stroke-width: 1.75;
+}
+.pg-line {
+  stroke: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  stroke-width: 1.75;
+  stroke-dasharray: 1;
+}
+/* A short yellow dash that rides the tip of the line as it draws, then runs off the end. */
+.pg-spark {
+  stroke: var(--color-signal);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 0.04 1.2;
+  stroke-dashoffset: -1.1;
+  opacity: 0;
+}
+@keyframes pg-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes pg-spark {
+  from {
+    stroke-dashoffset: 0.04;
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+}
+@keyframes pg-pop {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+@keyframes pg-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pg-fill {
+  from {
+    scale: 0 1;
+  }
+}
+/* Without motion the timer has nothing to show: the active dot is solid. */
+.pg-timer {
+  scale: 1 1;
+}
+
 @keyframes grow {
   from {
     transform: scaleY(0);
@@ -189,8 +312,101 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* The phone menu (SiteHeader), opening and closing: the overlay fades, the sheet eases down into place,
+     the close mark turns in, and the links rise one after another (40ms apart). @starting-style gives each
+     its first frame; display and overlay transition discretely so the exit plays before the popover hides.
+     Closing runs everything at once, without the stagger. */
+  .menu {
+    opacity: 0;
+    transition:
+      opacity 320ms var(--ease-ui),
+      display 320ms allow-discrete,
+      overlay 320ms allow-discrete;
+  }
+  .menu:popover-open {
+    opacity: 1;
+  }
+  .menu-sheet,
+  .menu-item,
+  .menu-close {
+    transition:
+      opacity 360ms var(--ease-ui),
+      translate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 200ms var(--ease-ui),
+      color 200ms var(--ease-ui),
+      box-shadow 250ms var(--ease-ui);
+  }
+  .menu-sheet {
+    transform-origin: top center;
+    opacity: 0;
+    translate: 0 -16px;
+    scale: 0.96;
+  }
+  .menu-item {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  .menu-close {
+    rotate: -90deg;
+  }
+  .menu:popover-open :is(.menu-sheet, .menu-item) {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+  .menu:popover-open .menu-close {
+    rotate: 0deg;
+  }
+  .menu:popover-open .menu-item {
+    transition-delay: calc(90ms + var(--i) * 40ms);
+  }
+  @starting-style {
+    .menu:popover-open {
+      opacity: 0;
+    }
+    .menu:popover-open .menu-sheet {
+      opacity: 0;
+      translate: 0 -16px;
+      scale: 0.96;
+    }
+    .menu:popover-open .menu-item {
+      opacity: 0;
+      translate: 0 10px;
+    }
+    .menu:popover-open .menu-close {
+      rotate: -90deg;
+    }
+  }
+  /* 2.2s to draw six steps at an even pace (linear, like the node stagger), so each node lights as the spark reaches it. */
+  .pg-line {
+    animation: pg-draw 2.2s linear 0.15s backwards;
+  }
+  .pg-spark {
+    animation: pg-spark 2.2s linear 0.15s backwards;
+  }
+  .pg-node {
+    animation: pg-pop 450ms var(--ease-ui) backwards;
+    animation-delay: calc(0.15s + var(--i) * 0.4s);
+  }
+  .pg-name {
+    animation: pg-fade 400ms var(--ease-ui) backwards;
+  }
+  /* The active dot fills over one cycle: the 2.4s drawing, then a 3.6s hold. Its end moves the graph on
+     to the next kind of project. Hover or focus pauses it; under reduced motion it never runs, so the
+     graph stays on one kind until a dot is picked. */
+  .pg-timer {
+    animation: pg-fill 6s linear both;
+  }
+  .pg-cycle:hover .pg-timer,
+  .pg-cycle:focus-within .pg-timer {
+    animation-play-state: paused;
+  }
   .rise {
-    animation: rise 500ms var(--ease-ui) both;
+    /* backwards, not both: a fill that outlives the fade makes Chrome treat the element as a backdrop root,
+       and the frosted terminal inside would blur nothing. */
+    animation: rise 500ms var(--ease-ui) backwards;
   }
   /* Bars draw themselves as the chart scrolls in, where the browser supports it. */
   @supports (animation-timeline: view()) {

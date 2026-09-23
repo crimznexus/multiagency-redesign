@@ -14,10 +14,10 @@ const issue = [
 
 export function AgencyTemplate() {
   return (
-    <section id="template" aria-labelledby="template-title" className="scroll-mt-16 border-t border-rule">
+    <section id="template" aria-labelledby="template-title" className="scroll-mt-16">
       <div className="page grid12 py-section">
-        <div className="lg:col-span-5">
-          <p className="type-label mb-5 text-muted">Agency template</p>
+        {/* Sections alternate from Open books down: words right, the command and what it ships left (phones: words first). */}
+        <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1">
           <h2 id="template-title" className="type-h2">
             Launch your own agency.
           </h2>
@@ -31,7 +31,7 @@ export function AgencyTemplate() {
           </div>
         </div>
 
-        <div className="mt-10 lg:col-span-6 lg:col-start-7 lg:mt-0">
+        <div className="mt-10 lg:col-span-6 lg:col-start-1 lg:row-start-1 lg:mt-0">
           <CommandLine />
           <dl className="mt-8 grid gap-x-6 sm:grid-cols-2">
             {issue.map((i) => (

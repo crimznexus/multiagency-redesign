@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']
 
@@ -10,9 +10,16 @@ test('home renders the headline', async ({ page }) => {
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
+  // Hovering the pipeline pauses its cycle, so the graph holds still while it's measured.
+  await page.getByRole('tabpanel').hover()
   // Measure the settled page: mid-fade, the hero's text is part-transparent and reads as low contrast.
   await page.waitForFunction(() =>
-    document.getAnimations().every((a) => (a as CSSAnimation).animationName !== 'rise' || a.playState === 'finished'),
+    document
+      .getAnimations()
+      .every(
+        (a) =>
+          !/^(rise|pg-(draw|spark|pop|fade))$/.test((a as CSSAnimation).animationName) || a.playState === 'finished',
+      ),
   )
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze()
   expect(results.violations).toEqual([])
@@ -25,7 +32,7 @@ test('no horizontal overflow on a small phone', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0)
 })
 
-test('nothing on the page loops', async ({ page }) => {
+test('no animation loops (the video is the one loop)', async ({ page }) => {
   await page.goto('/')
   const looping = await page.evaluate(() =>
     document
@@ -34,6 +41,33 @@ test('nothing on the page loops', async ({ page }) => {
       .map((a) => (a as CSSAnimation).animationName),
   )
   expect(looping).toEqual([])
+})
+
+test.describe('hero video', () => {
+  const video = (page: Page) =>
+    page.locator('#main video').evaluate((v: HTMLVideoElement) => ({ paused: v.paused, loaded: v.readyState > 0 }))
+
+  test('plays after load, with no controls of its own', async ({ page }) => {
+    await page.goto('/')
+    await expect.poll(async () => (await video(page)).paused).toBe(false)
+    await expect(page.getByRole('button', { name: /background video/ })).toHaveCount(0)
+  })
+
+  test('fills the footer wordmark, loading only once scrolled to', async ({ page }) => {
+    await page.goto('/')
+    const footer = page.locator('footer video')
+    const state = () => footer.evaluate((v: HTMLVideoElement) => ({ paused: v.paused, loaded: v.readyState > 0 }))
+    expect(await state()).toEqual({ paused: true, loaded: false })
+    await footer.scrollIntoViewIfNeeded()
+    await expect.poll(async () => (await state()).paused).toBe(false)
+  })
+
+  test('stays a still poster, never downloaded, under reduced motion', async ({ browser }) => {
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    await page.goto('/', { waitUntil: 'networkidle' })
+    expect(await video(page)).toEqual({ paused: true, loaded: false })
+    await page.close()
+  })
 })
 
 test.describe('project console', () => {
@@ -59,10 +93,28 @@ test.describe('project console', () => {
     await expect(steps.filter({ hasText: 'owned by AI' })).toHaveCount(1)
   })
 
-  test('the terminal types the pipeline out in full', async ({ page }) => {
+  test('moves on to the next kind of project once the graph has drawn', async ({ page }) => {
     await page.goto('/')
-    const draft = page.getByRole('tabpanel').locator('[aria-hidden="true"]').getByText('Draft', { exact: true })
-    await expect(draft).toBeVisible({ timeout: 10_000 })
+    const selected = page.getByRole('tab', { selected: true })
+    await expect(selected).toHaveAccessibleName('Product')
+    await expect(selected).toHaveAccessibleName('Bots', { timeout: 10_000 })
+    await expect(page.getByRole('tabpanel')).toHaveAccessibleName('Bots')
+  })
+
+  test('stays on one kind under reduced motion', async ({ browser }) => {
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    await page.goto('/')
+    await page.waitForTimeout(7000)
+    await expect(page.getByRole('tab', { selected: true })).toHaveAccessibleName('Product')
+    await page.close()
+  })
+
+  test('the graph draws all six steps, with one AI node', async ({ page }) => {
+    await page.goto('/')
+    const graph = page.getByRole('tabpanel').locator('[aria-hidden="true"]')
+    for (const step of ['Brief', 'Draft', 'Build', 'Review', 'Accept', 'Paid'])
+      await expect(graph.getByText(step, { exact: true })).toBeVisible({ timeout: 10_000 })
+    await expect(graph.getByText('AI', { exact: true })).toHaveCount(1)
   })
 })
 
@@ -84,7 +136,8 @@ test('the comparison is one real table at every width', async ({ page, isMobile 
 test('the console covers all four kinds of project', async ({ page }) => {
   await page.goto('/')
   const tabs = page.getByRole('tablist', { name: 'Choose a kind of project' }).getByRole('tab')
-  await expect(tabs).toHaveText(['Product', 'Bots', 'Video', 'Social'])
+  for (const [i, name] of ['Product', 'Bots', 'Video', 'Social'].entries())
+    await expect(tabs.nth(i)).toHaveAccessibleName(name)
 })
 
 test.describe('work', () => {
@@ -203,12 +256,12 @@ test.describe('dark only', () => {
       const page = await browser.newPage({ colorScheme })
       await page.goto('/', { waitUntil: 'commit' })
       await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark')
-      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#13120E')
+      await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#000000')
       const bg = (sel: string) =>
         page.evaluate((s) => getComputedStyle(document.querySelector(s) as Element).backgroundColor, sel)
-      expect(await bg('html')).toBe('rgb(19, 18, 14)')
+      expect(await bg('html')).toBe('rgb(0, 0, 0)')
       await page.waitForLoadState('load')
-      expect(await bg('body')).toBe('rgb(19, 18, 14)')
+      expect(await bg('body')).toBe('rgb(0, 0, 0)')
       await page.close()
     })
   }

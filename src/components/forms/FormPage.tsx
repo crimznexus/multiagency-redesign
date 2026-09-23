@@ -8,7 +8,6 @@ import { SiteHeader } from '../SiteHeader'
  * form on the right. Stacks on phones.
  */
 export function FormPage({
-  label,
   titleId,
   title,
   lede,
@@ -16,7 +15,6 @@ export function FormPage({
   aside,
   children,
 }: {
-  label: string
   titleId: string
   title: string
   lede: string
@@ -29,7 +27,6 @@ export function FormPage({
       <SiteHeader />
       <main id="main" className="page grid12 items-start gap-y-12 pt-10 pb-section sm:pt-14 md:grid-cols-12">
         <div className="md:col-span-5 lg:sticky lg:top-28">
-          <p className="type-label mb-5 text-muted">{label}</p>
           <h1 id={titleId} className="type-h2">
             {title}
           </h1>

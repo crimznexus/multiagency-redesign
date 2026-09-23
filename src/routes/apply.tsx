@@ -31,7 +31,6 @@ const next = [
 function Apply() {
   return (
     <FormPage
-      label="Apply to join"
       titleId="apply-title"
       title="Tell us about your work."
       lede="Specialists in product, bots, video and social. Named on the work, paid on the public record."
