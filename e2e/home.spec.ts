@@ -3,6 +3,13 @@ import { expect, type Page, test } from '@playwright/test'
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']
 
+test('the hero fills the screen on load', async ({ page }) => {
+  await page.goto('/')
+  const hero = page.getByRole('region', { name: /Build agencies/ })
+  const height = (await hero.boundingBox())?.height ?? 0
+  expect(Math.abs(height - (page.viewportSize()?.height ?? 0))).toBeLessThanOrEqual(2)
+})
+
 test('home renders the headline', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Build agencies\s*together\./)

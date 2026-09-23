@@ -8,13 +8,17 @@ import { ArrowRight } from './ui/icons'
  * Split hero: the headline, the value prop and the two CTAs take the left
  * seven columns, and the pipeline graph (a real, working piece of the
  * product) takes the right. Four text elements, nothing else (DESIGN.md §5).
- * Behind them, full bleed, a looping dot-matrix video (HeroVideo).
+ * Behind them, full bleed, the looping video (HeroVideo).
+ *
+ * On load it fills the screen (the header floats over its top), content
+ * centred in it; as the page scrolls, the video frame draws in to a rounded
+ * card and the hero settles into a section like the others.
  */
 export function Hero({ ledger }: { ledger: LedgerResult }) {
   return (
-    <section aria-labelledby="hero-title" className="relative isolate -mt-18 pt-18">
+    <section aria-labelledby="hero-title" className="relative isolate -mt-18 flex min-h-svh flex-col pt-18">
       <HeroVideo />
-      <div className="page grid12 pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14 items-center gap-y-12 md:grid-cols-12">
+      <div className="page grid12 flex-1 content-center items-center gap-y-12 pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14 md:grid-cols-12">
         <div className="flex flex-col gap-8 md:col-span-6 lg:col-span-7">
           <h1
             id="hero-title"

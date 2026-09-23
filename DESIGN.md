@@ -69,7 +69,7 @@ Rules:
 
 | # | Section | Job | Layout family |
 |---|---|---|---|
-| 1 | Hero + pipeline graph | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
+| 1 | Hero + pipeline graph | Hook; show the model working | Full screen on load (`min-h-svh`, content centred; the header floats over its top), then as the page scrolls the video frame draws in over the first 70vh to a card on the gutters with 28px corners (`hero-settle`, a root scroll timeline; full bleed where unsupported or under reduced motion). Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
 | 3 | Comparison | Why us | Table left (7 cols), argument right (4 cols); on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |

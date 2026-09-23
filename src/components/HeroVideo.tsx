@@ -13,7 +13,7 @@ import { LoopVideo } from './LoopVideo'
  */
 export function HeroVideo() {
   return (
-    <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+    <div aria-hidden="true" className="hero-frame absolute inset-0 -z-10 overflow-hidden">
       <LoopVideo
         eager
         className="h-[85vw] w-full object-cover [mask-image:linear-gradient(to_bottom,#000_60%,transparent)] md:h-full md:[mask-image:none]"

@@ -417,6 +417,25 @@
       animation-range: entry 0% cover 35%;
     }
   }
+  /* The hero opens full screen and settles as the page scrolls: over the first 70vh the video frame draws
+     in from the edges to a card on the page's gutters with 28px corners, and back on the way up. Tied to the
+     root scroll, so it tracks the scroll exactly; without scroll timelines it simply stays full bleed. */
+  @supports (animation-timeline: scroll()) {
+    .hero-frame {
+      animation: hero-settle linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 70vh;
+    }
+  }
+}
+
+@keyframes hero-settle {
+  from {
+    clip-path: inset(0 0 0 0 round 0);
+  }
+  to {
+    clip-path: inset(0.75rem var(--spacing-gutter) 0 var(--spacing-gutter) round 28px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
