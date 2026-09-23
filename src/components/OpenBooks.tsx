@@ -32,7 +32,6 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
     >
       <div className="page grid12 py-section md:grid-cols-12">
         <div className="md:col-span-5 lg:sticky lg:top-24 lg:self-start">
-          <p className="type-label mb-5 text-muted">Open books</p>
           <h2 id="books-title" className="type-h2">
             Every payout is public.
           </h2>

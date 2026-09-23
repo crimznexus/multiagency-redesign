@@ -26,7 +26,6 @@ const next = [
 function Contact() {
   return (
     <FormPage
-      label="Hire us"
       titleId="contact-title"
       title="Tell us what you need."
       lede="Product, bots, video or social. Describe it in your own words; we turn it into a brief."

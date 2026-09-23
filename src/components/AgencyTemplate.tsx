@@ -18,7 +18,6 @@ export function AgencyTemplate() {
       <div className="page grid12 py-section">
         {/* Sections alternate from Open books down: words right, the command and what it ships left (phones: words first). */}
         <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1">
-          <p className="type-label mb-5 text-muted">Agency template</p>
           <h2 id="template-title" className="type-h2">
             Launch your own agency.
           </h2>

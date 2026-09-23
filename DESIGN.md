@@ -35,7 +35,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 Rules:
 - The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
-- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the scrolled header and the scrolled header.
+- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the video's gradient, the frosted glass of the scrolled header, the AI node's glow and the buttons' hover glow.
 
 ## 3. Typography
 
@@ -50,11 +50,11 @@ Rules:
 | Numeral | `type-num` | clamp(3.5rem, 1.9rem + 6.4vw, 8rem) | 600 | 0.95 | -0.055em | The books, the brief count |
 | Lede | `text-lede` | clamp(1.0625rem, 1rem + 0.4vw, 1.25rem) | 400 | 1.45 | -0.005em | Hero value prop |
 | Body | `text-base` / `text-[17px]` | 1rem / 1.0625rem | 400 | 1.5 to 1.6 | 0 | Default, section body |
-| Label | `type-label` | 0.8125rem mono | 500 | 1.35 | 0.08em, uppercase | The two section labels, owner chips |
+| Label | `type-label` | 0.8125rem mono | 500 | 1.35 | 0.08em, uppercase | Owner chips, the pipeline's kind name, table captions, the footer's group labels |
 | Mono | `type-mono` | 0.8125rem mono | 400 | 1.4 | 0 | Figures, account IDs, proposal numbers, dates |
 
 Rules:
-- Sentence case for every heading and every piece of body copy. Uppercase is reserved for `type-label`: the two section labels and the owner chips.
+- Sentence case for every heading and every piece of body copy. Uppercase is reserved for `type-label`: owner chips, the pipeline's kind name, table captions and the footer's group labels.
 - Headings are flush left and end in a full stop. No accent-coloured words: emphasis is size and position, not colour.
 - Display and H2 carry a `padding-bottom` of 0.04em and 0.06em, so descenders in "agencies" and "payout" are never clipped.
 - Figures always mono and `tabular-nums`.
@@ -79,7 +79,7 @@ Rules:
 
 **Alternating sides (client request):** from Open books down, the words swap sides section by section on desktop: Open books left, Comparison right, Our work left (the list, with the preview right), Agency template right, FAQ left. Swapped sections move with `lg:col-start` and `lg:row-start-1`, not by reordering the markup, so on phones every section still reads words first.
 
-Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open books" and "Agency template". The hero has none, and no section is numbered.
+**No section labels (client request):** no eyebrow above any heading, on the home page or the form pages. Each section opens on its heading, and no section is numbered.
 
 ## 5. Components
 
@@ -146,7 +146,7 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 - Both share one layout (`FormPage`) and one form kit (`form-kit.tsx`), so they cannot drift apart. `/apply` asks what the applicant does best, name and email, an optional NEAR account and portfolio link, and a few sentences on their work, and keeps the live site's "browse open work on NEARN" link under its steps.
 
 #### Contact page (`/contact`)
-- Every "Hire us" link lands here, never on the old site. Split like the hero: label, H2-size heading and lede, then a three-row "what happens next" list on the left; the form on the right under a 2px ink rule.
+- Every "Hire us" link lands here, never on the old site. Split like the hero: H2-size heading and lede, then a three-row "what happens next" list on the left; the form on the right under a 2px ink rule.
 - Fields: the kind of project as square chips (a radio group; the chosen one fills with ink), name and email side by side, company (optional), the brief with a hint line. Inputs are square, 1px ink at 40%, full ink on hover and focus.
 - Errors: validated with the same rules as the server, shown in mono under each field, the field tinted yellow at 15%, focus moved to the first. A failed send keeps the text and says so in the status line.
 - Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
