@@ -162,7 +162,7 @@ function Transcript({ lines }: { lines: Line[] }) {
             >
               {owner}
             </span>
-            <span className="col-span-2 truncate text-bg/75 @xs:col-span-1">{note}</span>
+            <span className="col-span-2 text-bg/75 @xs:col-span-1">{note}</span>
           </div>
         )
       })}
