@@ -1,29 +1,31 @@
 import type { LedgerResult } from '~/server/ledger'
-import { ProjectConsole } from './console/ProjectConsole'
+import { ProjectTerminal } from './console/ProjectTerminal'
 import { APPLY_LABEL, APPLY_URL, CONTACT_LABEL, CONTACT_URL } from './SiteHeader'
 import { ArrowRight } from './ui/icons'
 
 /**
- * Poster hero: the headline runs the full grid, the value prop and the two
- * CTAs sit in the left columns, and the pipeline (a real, working piece of the
+ * Split hero: the headline, the value prop and the two CTAs take the left
+ * seven columns, and the pipeline terminal (a real, working piece of the
  * product) takes the right. Four text elements, nothing else (DESIGN.md §5).
  */
 export function Hero({ ledger }: { ledger: LedgerResult }) {
   return (
     <section aria-labelledby="hero-title" className="page pt-10 pb-[clamp(4rem,8vw,5.5rem)] sm:pt-14">
-      <h1 id="hero-title" className="type-display rise">
-        Build agencies
-        <br />
-        together.
-      </h1>
-
-      <div className="grid12 mt-8 items-start gap-y-10 lg:mt-12">
-        <div className="rise flex flex-col gap-8 [animation-delay:80ms] lg:col-span-5">
-          <p className="max-w-[36ch] text-lede text-muted">
+      <div className="grid12 items-center gap-y-12 md:grid-cols-12">
+        <div className="flex flex-col gap-8 md:col-span-6 lg:col-span-7">
+          <h1
+            id="hero-title"
+            className="type-display rise md:text-[clamp(2.5rem,0.2rem+5.2vw,4.5rem)] lg:text-[clamp(4rem,0.5rem+5.4vw,6.75rem)]"
+          >
+            Build agencies
+            <br />
+            together.
+          </h1>
+          <p className="rise max-w-[36ch] text-lede text-muted [animation-delay:80ms]">
             Human-led, AI-native agencies for hire. AI writes the first draft. Named people build, review and sign off
             the rest.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="rise flex flex-wrap gap-3 [animation-delay:80ms]">
             <a href={CONTACT_URL} className="btn btn-signal">
               {CONTACT_LABEL}
               <ArrowRight />
@@ -34,8 +36,11 @@ export function Hero({ ledger }: { ledger: LedgerResult }) {
           </div>
         </div>
 
-        <div id="how-it-works" className="rise scroll-mt-20 [animation-delay:160ms] lg:col-span-6 lg:col-start-7">
-          <ProjectConsole payments={ledger.payments} />
+        <div
+          id="how-it-works"
+          className="rise scroll-mt-20 [animation-delay:160ms] md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8"
+        >
+          <ProjectTerminal payments={ledger.payments} />
         </div>
       </div>
     </section>

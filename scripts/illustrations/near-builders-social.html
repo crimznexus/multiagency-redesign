@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NEAR Builders social</title>
+    <link rel="stylesheet" href="base.css" />
+    <style>
+      body {
+        padding: 56px 56px 48px;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding-bottom: 28px;
+        border-bottom: 2px solid var(--ink);
+      }
+      h1 {
+        font-size: 64px;
+        line-height: 0.95;
+        letter-spacing: -0.045em;
+        font-weight: 600;
+      }
+      .week {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+      }
+      .day {
+        border-right: 1px solid var(--rule);
+        padding: 18px 16px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .day:last-child {
+        border-right: 0;
+      }
+      .day > .label {
+        color: var(--muted);
+      }
+      .post {
+        border: 1px solid var(--rule);
+        background: var(--bg);
+        padding: 14px;
+        display: grid;
+        gap: 9px;
+      }
+      .post.live {
+        border-top: 2px solid var(--ink);
+      }
+      .media {
+        aspect-ratio: 16 / 10;
+        background: var(--surface);
+        display: grid;
+        place-items: center;
+      }
+      .media span {
+        width: 22%;
+        aspect-ratio: 1;
+        background: var(--ink);
+      }
+      .status {
+        justify-self: start;
+        font-size: 11px;
+        padding: 2px 6px;
+        color: var(--muted);
+        border: 1px solid var(--rule);
+      }
+      .status.sched {
+        background: var(--signal);
+        border-color: var(--signal);
+        color: var(--ink);
+      }
+      .status.posted {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: var(--bg);
+      }
+      .reply {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 18px;
+        height: 18px;
+        background: var(--surface);
+        flex: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="label" style="color: var(--muted); margin-bottom: 18px">Social · community</div>
+        <h1>Posts, replies, community.</h1>
+      </div>
+      <div class="mono" style="font-size: 14px; color: var(--muted)">Illustration</div>
+    </header>
+    <section class="week">
+      <div class="day">
+        <span class="label">Mon</span>
+        <div class="post live">
+          <span class="status posted label">Posted</span>
+          <div class="media"><span></span></div>
+          <div class="bar ink" style="width: 85%"></div>
+          <div class="bar" style="width: 65%"></div>
+        </div>
+        <div class="reply"><span class="dot"></span><div class="bar" style="width: 70%"></div></div>
+        <div class="reply"><span class="dot"></span><div class="bar" style="width: 55%"></div></div>
+      </div>
+      <div class="day">
+        <span class="label">Tue</span>
+        <div class="reply"><span class="dot"></span><div class="bar" style="width: 60%"></div></div>
+      </div>
+      <div class="day">
+        <span class="label">Wed</span>
+        <div class="post live">
+          <span class="status sched label">Scheduled</span>
+          <div class="bar ink" style="width: 90%"></div>
+          <div class="bar" style="width: 80%"></div>
+          <div class="bar" style="width: 50%"></div>
+        </div>
+      </div>
+      <div class="day">
+        <span class="label">Thu</span>
+        <div class="reply"><span class="dot"></span><div class="bar" style="width: 65%"></div></div>
+      </div>
+      <div class="day">
+        <span class="label">Fri</span>
+        <div class="post">
+          <span class="status label">Draft</span>
+          <div class="media"><span></span></div>
+          <div class="bar ink" style="width: 75%"></div>
+          <div class="bar" style="width: 60%"></div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

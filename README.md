@@ -30,3 +30,7 @@ npm run dev          # http://localhost:3000
 | `npm run test:e2e` | Playwright end-to-end and accessibility tests (desktop + mobile) |
 
 CI runs all of the above plus Lighthouse (≥ 0.95 in every category) on each push.
+
+### Hire-us inquiries
+
+`/contact` posts to `/api/contact`, which validates the inquiry and forwards it as JSON to `CONTACT_WEBHOOK_URL` (a Slack or Discord incoming webhook, Zapier, Make, n8n or a CRM; see `.env.example`). Without it, development logs inquiries to the console and production answers 503, so a lead is never silently dropped.
