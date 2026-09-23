@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ApiApplyRouteImport } from './routes/api/apply'
 import { Route as ApiContactRouteImport } from './routes/api/contact'
 import { Route as ApiLedgerRouteImport } from './routes/api/ledger'
 
@@ -19,9 +21,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiApplyRoute = ApiApplyRouteImport.update({
+  id: '/api/apply',
+  path: '/api/apply',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiContactRoute = ApiContactRouteImport.update({
@@ -37,34 +49,51 @@ const ApiLedgerRoute = ApiLedgerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/api/apply': typeof ApiApplyRoute
   '/api/contact': typeof ApiContactRoute
   '/api/ledger': typeof ApiLedgerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/api/apply': typeof ApiApplyRoute
   '/api/contact': typeof ApiContactRoute
   '/api/ledger': typeof ApiLedgerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/contact': typeof ContactRoute
+  '/api/apply': typeof ApiApplyRoute
   '/api/contact': typeof ApiContactRoute
   '/api/ledger': typeof ApiLedgerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contact' | '/api/contact' | '/api/ledger'
+  fullPaths:
+    '/' | '/apply' | '/contact' | '/api/apply' | '/api/contact' | '/api/ledger'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contact' | '/api/contact' | '/api/ledger'
-  id: '__root__' | '/' | '/contact' | '/api/contact' | '/api/ledger'
+  to:
+    '/' | '/apply' | '/contact' | '/api/apply' | '/api/contact' | '/api/ledger'
+  id:
+    | '__root__'
+    | '/'
+    | '/apply'
+    | '/contact'
+    | '/api/apply'
+    | '/api/contact'
+    | '/api/ledger'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApplyRoute: typeof ApplyRoute
   ContactRoute: typeof ContactRoute
+  ApiApplyRoute: typeof ApiApplyRoute
   ApiContactRoute: typeof ApiContactRoute
   ApiLedgerRoute: typeof ApiLedgerRoute
 }
@@ -78,11 +107,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/apply': {
+      id: '/api/apply'
+      path: '/api/apply'
+      fullPath: '/api/apply'
+      preLoaderRoute: typeof ApiApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/contact': {
@@ -104,7 +147,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApplyRoute: ApplyRoute,
   ContactRoute: ContactRoute,
+  ApiApplyRoute: ApiApplyRoute,
   ApiContactRoute: ApiContactRoute,
   ApiLedgerRoute: ApiLedgerRoute,
 }

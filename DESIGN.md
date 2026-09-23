@@ -122,7 +122,10 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 ### FAQ
 - Heading left, two-column definition list, every answer visible. **(taste: accordion removed.)**
 
-### Contact page (`/contact`)
+### Form pages (`/contact`, `/apply`)
+- Both share one layout (`FormPage`) and one form kit (`form-kit.tsx`), so they cannot drift apart. `/apply` asks what the applicant does best, name and email, an optional NEAR account and portfolio link, and a few sentences on their work, and keeps the live site's "browse open work on NEARN" link under its steps.
+
+#### Contact page (`/contact`)
 - Every "Hire us" link lands here, never on the old site. Split like the hero: label, H2-size heading and lede, then a three-row "what happens next" list on the left; the form on the right under a 2px ink rule.
 - Fields: the kind of project as square chips (a radio group; the chosen one fills with ink), name and email side by side, company (optional), the brief with a hint line. Inputs are square, 1px ink at 40%, full ink on hover and focus.
 - Errors: validated with the same rules as the server, shown in mono under each field, the field tinted yellow at 15%, focus moved to the first. A failed send keeps the text and says so in the status line.

@@ -31,6 +31,6 @@ npm run dev          # http://localhost:3000
 
 CI runs all of the above plus Lighthouse (≥ 0.95 in every category) on each push.
 
-### Hire-us inquiries
+### Forms: hire us and apply to join
 
-`/contact` posts to `/api/contact`, which validates the inquiry and forwards it as JSON to `CONTACT_WEBHOOK_URL` (a Slack or Discord incoming webhook, Zapier, Make, n8n or a CRM; see `.env.example`). Without it, development logs inquiries to the console and production answers 503, so a lead is never silently dropped.
+`/contact` posts to `/api/contact` and `/apply` posts to `/api/apply`. Both validate with the same rules as the form (`src/lib`) and forward the submission as JSON to `CONTACT_WEBHOOK_URL` (a Slack or Discord incoming webhook, Zapier, Make, n8n or a CRM; see `.env.example`), with `"type": "inquiry"` or `"application"`. Set `APPLY_WEBHOOK_URL` to send applications somewhere else. Without a webhook, development logs submissions to the console and production answers 503, so nothing is ever silently dropped.
