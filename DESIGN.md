@@ -75,7 +75,7 @@ Rules:
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
 | 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
 | 6 | FAQ | Remove doubt | Heading left, one-column list of questions that slide open |
-| 7 | Footer | Navigate | Wordmark at poster scale, one row of links |
+| 7 | Footer | Navigate | Wordmark at poster scale, one row of links (desktop), two labelled link columns (phone) |
 
 Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open books" and "Agency template". The hero has none, and no section is numbered.
 
@@ -135,7 +135,9 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
 
 ### Footer
-- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`, one row of links, the treasury account in mono.
+- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`.
+- From `md`: one row, the links left and the treasury account in mono right.
+- Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 
 ### Icons
 - Phosphor (`@phosphor-icons/react/ssr`), weight "bold", one family. **(taste: hand-drawn SVG icons removed.)**
