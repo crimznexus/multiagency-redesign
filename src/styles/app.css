@@ -305,18 +305,6 @@
   scale: 1 1;
 }
 
-/* The phone menu sheet settles in under the header. */
-@keyframes menu-in {
-  from {
-    opacity: 0;
-    scale: 0.97;
-  }
-}
-@keyframes overlay-in {
-  from {
-    opacity: 0;
-  }
-}
 @keyframes grow {
   from {
     transform: scaleY(0);
@@ -324,6 +312,73 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* The phone menu (SiteHeader), opening and closing: the overlay fades, the sheet eases down into place,
+     the close mark turns in, and the links rise one after another (40ms apart). @starting-style gives each
+     its first frame; display and overlay transition discretely so the exit plays before the popover hides.
+     Closing runs everything at once, without the stagger. */
+  .menu {
+    opacity: 0;
+    transition:
+      opacity 320ms var(--ease-ui),
+      display 320ms allow-discrete,
+      overlay 320ms allow-discrete;
+  }
+  .menu:popover-open {
+    opacity: 1;
+  }
+  .menu-sheet,
+  .menu-item,
+  .menu-close {
+    transition:
+      opacity 360ms var(--ease-ui),
+      translate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 200ms var(--ease-ui),
+      color 200ms var(--ease-ui),
+      box-shadow 250ms var(--ease-ui);
+  }
+  .menu-sheet {
+    transform-origin: top center;
+    opacity: 0;
+    translate: 0 -16px;
+    scale: 0.96;
+  }
+  .menu-item {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  .menu-close {
+    rotate: -90deg;
+  }
+  .menu:popover-open :is(.menu-sheet, .menu-item) {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+  .menu:popover-open .menu-close {
+    rotate: 0deg;
+  }
+  .menu:popover-open .menu-item {
+    transition-delay: calc(90ms + var(--i) * 40ms);
+  }
+  @starting-style {
+    .menu:popover-open {
+      opacity: 0;
+    }
+    .menu:popover-open .menu-sheet {
+      opacity: 0;
+      translate: 0 -16px;
+      scale: 0.96;
+    }
+    .menu:popover-open .menu-item {
+      opacity: 0;
+      translate: 0 10px;
+    }
+    .menu:popover-open .menu-close {
+      rotate: -90deg;
+    }
+  }
   /* 2.2s to draw six steps at an even pace (linear, like the node stagger), so each node lights as the spark reaches it. */
   .pg-line {
     animation: pg-draw 2.2s linear 0.15s backwards;

@@ -1,5 +1,5 @@
 import { useLocation } from '@tanstack/react-router'
-import { type RefObject, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, type RefObject, useEffect, useRef, useState } from 'react'
 import { LogoMark } from './Logo'
 
 export const CONTACT_URL = '/contact'
@@ -19,7 +19,6 @@ export const NAV = [
 /** The header's links: home first, then the sections. */
 const LINKS = [{ href: '/', label: 'Home' }, ...NAV] as const
 
-const shadow = 'shadow-[0_4px_14px_rgba(0,0,0,0.16)]'
 /** Three dots under the active link: one dot, and two drawn as its shadows, in the colour `--dot`. */
 const dots =
   "after:absolute after:left-1/2 after:size-[3px] after:-translate-x-1/2 after:rounded-full after:bg-(--dot) after:shadow-[-5px_0_0_var(--dot),5px_0_0_var(--dot)] after:content-['']"
@@ -87,7 +86,7 @@ function useActive() {
  * video runs up behind it. At the top it is light frosted glass; as the page
  * scrolls it deepens, step by step with the scroll, into dark glass, and
  * lightens again on the way back up. Phones get the mark, a round menu
- * button, and a white sheet of links.
+ * button, and a dark glass sheet of links that eases in.
  */
 export function SiteHeader() {
   const active = useActive()
@@ -150,12 +149,13 @@ export function SiteHeader() {
           </span>
         </button>
 
-        {/* The popover is the whole overlay, so the mark and the close button sit sharp above the blur. */}
+        {/* The popover is the whole overlay, so the mark and the close button sit sharp above the blur. It opens
+            and closes with the transitions on `.menu*` in app.css. */}
         <div
           id="site-menu"
           popover="auto"
           onToggle={(e) => setOpen((e.nativeEvent as ToggleEvent).newState === 'open')}
-          className="inset-0 m-0 size-full max-h-none max-w-none border-0 bg-black/60 p-0 backdrop-blur-[6px] open:block motion-safe:open:animate-[overlay-in_280ms_var(--ease-ui)]"
+          className="menu inset-0 m-0 size-full max-h-none max-w-none border-0 bg-black/55 p-0 backdrop-blur-md"
         >
           {/* A tap on the dimmed area closes it (it's inside the popover, so light-dismiss can't). Esc is native. */}
           <button
@@ -169,7 +169,7 @@ export function SiteHeader() {
           <div className="page pointer-events-none relative flex h-18 items-center justify-between">
             <span
               aria-hidden="true"
-              className={`grid size-12 place-items-center rounded-full bg-white text-[#111] ${shadow}`}
+              className="grid size-12 place-items-center rounded-full border border-ink/15 bg-[#141412]/80 text-ink"
             >
               <LogoMark className="size-[42%]" />
             </span>
@@ -178,19 +178,19 @@ export function SiteHeader() {
               popoverTarget="site-menu"
               popoverTargetAction="hide"
               aria-label="Close menu"
-              className={`pointer-events-auto grid size-12 place-items-center rounded-full bg-white focus-visible:outline-white ${shadow}`}
+              className="menu-close pointer-events-auto grid size-12 place-items-center rounded-full border border-ink/15 bg-[#141412]/80"
             >
               <span aria-hidden="true" className="relative block size-[18px]">
-                <span className="absolute top-1/2 left-0 h-[1.5px] w-full rotate-45 bg-[#111]" />
-                <span className="absolute top-1/2 left-0 h-[1.5px] w-full -rotate-45 bg-[#111]" />
+                <span className="absolute top-1/2 left-0 h-[1.5px] w-full rotate-45 bg-ink" />
+                <span className="absolute top-1/2 left-0 h-[1.5px] w-full -rotate-45 bg-ink" />
               </span>
             </button>
           </div>
           <nav
             aria-label="Menu"
-            className="relative mx-auto mt-1 grid w-[calc(100%-2rem)] [--dot:#111] max-w-sm rounded-[28px] bg-white px-4.5 pt-5.5 pb-5 text-[#2e2e2e] shadow-[0_20px_60px_rgba(0,0,0,0.45)] motion-safe:animate-[menu-in_380ms_var(--ease-ui)]"
+            className="menu-sheet relative mx-auto mt-1 grid w-[calc(100%-2rem)] max-w-sm rounded-[28px] border border-ink/12 bg-[#141412]/85 px-4.5 pt-5 pb-5 text-ink shadow-[0_24px_70px_rgb(0_0_0/0.55)] [--dot:var(--color-signal)]"
           >
-            {LINKS.map((l) => {
+            {LINKS.map((l, i) => {
               const current = l.href === active
               return (
                 <a
@@ -198,20 +198,26 @@ export function SiteHeader() {
                   href={l.href}
                   aria-current={current ? 'location' : undefined}
                   onClick={(e) => e.currentTarget.closest<HTMLElement>('[popover]')?.hidePopover()}
-                  className={`relative flex min-h-12 items-center justify-center text-[17px] font-medium after:bottom-2 focus-visible:outline-[#111] ${
-                    current ? dots : 'text-[#6b6b6b]'
+                  style={{ '--i': i } as CSSProperties}
+                  className={`menu-item relative flex min-h-12 items-center justify-center rounded-full text-[17px] font-medium after:bottom-2 hover:bg-ink/6 ${
+                    current ? `text-ink ${dots}` : 'text-ink/70 hover:text-ink'
                   }`}
                 >
                   {l.label}
                 </a>
               )
             })}
-            <a href={CONTACT_URL} className="btn btn-signal mt-3 rounded-full focus-visible:outline-[#111]">
+            <a
+              href={CONTACT_URL}
+              style={{ '--i': LINKS.length } as CSSProperties}
+              className="menu-item btn btn-signal btn-lit mt-3 rounded-full"
+            >
               {CONTACT_LABEL}
             </a>
             <a
               href={APPLY_URL}
-              className="flex min-h-12 items-center justify-center text-[15px] text-[#6b6b6b] focus-visible:outline-[#111]"
+              style={{ '--i': LINKS.length + 1 } as CSSProperties}
+              className="menu-item flex min-h-12 items-center justify-center text-[15px] text-ink/70 hover:text-ink"
             >
               {APPLY_LABEL}
             </a>
