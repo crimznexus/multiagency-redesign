@@ -1,5 +1,5 @@
 import { useLocation } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { type RefObject, useEffect, useRef, useState } from 'react'
 import { LogoMark } from './Logo'
 
 export const CONTACT_URL = '/contact'
@@ -24,21 +24,32 @@ const shadow = 'shadow-[0_4px_14px_rgba(0,0,0,0.16)]'
 const dots =
   "after:absolute after:left-1/2 after:size-[3px] after:-translate-x-1/2 after:rounded-full after:bg-(--dot) after:shadow-[-5px_0_0_var(--dot),5px_0_0_var(--dot)] after:content-['']"
 
-/** Every surface eases between its solid face and frosted glass (the terminal's). */
-const surface =
-  'border transition-[background-color,border-color,color,box-shadow,backdrop-filter] duration-500 ease-(--ease-ui)'
-const glass = 'border-ink/15 bg-bg/35 text-ink shadow-none backdrop-blur-xl backdrop-saturate-150'
+/** How far the glass has deepened: 0 at the top of the page, 1 once it has scrolled this far. */
+const GLASS_AFTER = 200
 
-/** Past the first few pixels of scroll: the header turns to glass, and back at the top. */
-function useScrolled() {
-  const [scrolled, setScrolled] = useState(false)
+/**
+ * Writes the scroll progress to the header as `--p` (see `.hdr` in app.css), once
+ * per frame and without re-rendering: the glass follows the scroll, both ways.
+ */
+function useGlass(header: RefObject<HTMLElement | null>) {
   useEffect(() => {
-    const check = () => setScrolled(window.scrollY > 24)
-    check()
-    window.addEventListener('scroll', check, { passive: true })
-    return () => window.removeEventListener('scroll', check)
-  }, [])
-  return scrolled
+    const el = header.current
+    if (!el) return
+    let frame = 0
+    const update = () => {
+      frame = 0
+      el.style.setProperty('--p', Math.min(window.scrollY / GLASS_AFTER, 1).toFixed(3))
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(frame)
+    }
+  }, [header])
 }
 
 /**
@@ -73,17 +84,19 @@ function useActive() {
 /**
  * A floating header: the mark in a white circle, the links in a white pill,
  * and "Hire us" as a dark pill. It takes no bar of its own, so the hero's
- * video runs up behind it. Once the page scrolls, all of it turns to frosted
- * glass; back at the top, solid again. Phones get the mark, a round menu
+ * video runs up behind it. At the top it is light frosted glass; as the page
+ * scrolls it deepens, step by step with the scroll, into dark glass, and
+ * lightens again on the way back up. Phones get the mark, a round menu
  * button, and a white sheet of links.
  */
 export function SiteHeader() {
   const active = useActive()
   const [open, setOpen] = useState(false)
-  const scrolled = useScrolled()
+  const header = useRef<HTMLElement>(null)
+  useGlass(header)
 
   return (
-    <header className="sticky top-0 z-40 h-18">
+    <header ref={header} className="hdr sticky top-0 z-40 h-18">
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -91,14 +104,14 @@ export function SiteHeader() {
         <a
           href="/"
           aria-label="MultiAgency home"
-          className={`grid size-12 shrink-0 place-items-center rounded-full hover:scale-104 md:size-[clamp(40px,4.4vw,46px)] ${surface} [transition-property:background-color,border-color,color,box-shadow,backdrop-filter,scale] ${scrolled ? glass : `border-transparent bg-white text-[#111] ${shadow}`}`}
+          className="hdr-surface grid size-12 shrink-0 place-items-center rounded-full transition-[scale] hover:scale-104 md:size-[clamp(40px,4.4vw,46px)]"
         >
           <LogoMark className="size-[42%]" />
         </a>
 
         <nav
           aria-label="Primary"
-          className={`hidden h-[clamp(44px,5.2vw,48px)] max-w-[34rem] flex-1 items-center justify-around rounded-full px-2 md:flex ${surface} ${scrolled ? `${glass} [--dot:var(--color-ink)]` : `border-transparent bg-white [--dot:#111] ${shadow}`}`}
+          className="hdr-surface hidden h-[clamp(44px,5.2vw,48px)] max-w-[34rem] flex-1 items-center justify-around rounded-full px-2 md:flex"
         >
           {LINKS.map((l) => {
             const current = l.href === active
@@ -107,13 +120,7 @@ export function SiteHeader() {
                 key={l.href}
                 href={l.href}
                 aria-current={current ? 'location' : undefined}
-                className={`relative flex h-full items-center px-2 text-[clamp(13px,1.4vw,15px)] font-medium tracking-[-0.01em] whitespace-nowrap transition-colors after:bottom-[5px] focus-visible:-outline-offset-4 ${scrolled ? '' : 'focus-visible:outline-[#111]'} ${
-                  current
-                    ? `${scrolled ? 'text-ink' : 'text-[#2e2e2e]'} ${dots}`
-                    : scrolled
-                      ? 'text-ink/70 hover:text-ink'
-                      : 'text-[#6b6b6b] hover:text-[#2e2e2e]'
-                }`}
+                className={`hdr-link relative flex h-full items-center px-2 text-[clamp(13px,1.4vw,15px)] font-medium tracking-[-0.01em] whitespace-nowrap after:bottom-[5px] focus-visible:outline-current focus-visible:-outline-offset-4 ${current ? dots : ''}`}
               >
                 {l.label}
               </a>
@@ -123,7 +130,7 @@ export function SiteHeader() {
 
         <a
           href={CONTACT_URL}
-          className={`hidden h-[clamp(44px,5.2vw,48px)] shrink-0 items-center rounded-full px-6 text-[clamp(13px,1.4vw,15px)] font-medium hover:-translate-y-px hover:text-white md:flex ${surface} [transition-property:background-color,border-color,color,box-shadow,backdrop-filter,translate] ${scrolled ? `${glass} hover:bg-bg/55` : `border-transparent bg-[#28282a] text-[#c8c8c8] hover:bg-[#323234] ${shadow}`}`}
+          className="hdr-dark hidden h-[clamp(44px,5.2vw,48px)] shrink-0 items-center rounded-full px-6 text-[clamp(13px,1.4vw,15px)] font-medium transition-[translate] hover:-translate-y-px md:flex"
         >
           {CONTACT_LABEL}
         </a>
@@ -134,7 +141,7 @@ export function SiteHeader() {
           popoverTarget="site-menu"
           aria-label="Menu"
           aria-expanded={open}
-          className={`grid size-12 place-items-center rounded-full md:hidden ${surface} ${scrolled ? glass : `border-transparent bg-[#28282a] ${shadow}`}`}
+          className="hdr-dark grid size-12 place-items-center rounded-full md:hidden"
         >
           <span aria-hidden="true" className="grid w-[18px] gap-[5.25px]">
             <span className="h-[1.5px] bg-white" />

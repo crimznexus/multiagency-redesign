@@ -105,6 +105,39 @@
 }
 
 @layer components {
+  /* The header's glass, driven by scroll. SiteHeader sets --p from 0 (top of the page) to 1 (200px down):
+     light frosted glass deepens into the terminal's dark glass as the page moves. Text flips from dark to
+     light over the middle of that range (--t), where the glass is mid-grey, so it never sits on a matching
+     tone for long. */
+  .hdr {
+    --p: 0;
+    --t: clamp(0, (var(--p) - 0.35) * 3.3, 1);
+    --hdr-glass: color-mix(in srgb, var(--color-bg) 35%, transparent);
+    --dot: color-mix(in srgb, #111 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  .hdr-surface,
+  .hdr-dark {
+    border: 1px solid color-mix(in srgb, var(--color-ink) calc(var(--p) * 15%), transparent);
+    box-shadow: 0 4px 14px rgb(0 0 0 / calc(0.16 - var(--p) * 0.16));
+    -webkit-backdrop-filter: blur(calc(6px + var(--p) * 18px)) saturate(calc(1.15 + var(--p) * 0.35));
+    backdrop-filter: blur(calc(6px + var(--p) * 18px)) saturate(calc(1.15 + var(--p) * 0.35));
+  }
+  .hdr-surface {
+    background-color: color-mix(in srgb, rgb(255 255 255 / 0.7) calc(100% - var(--p) * 100%), var(--hdr-glass));
+    color: color-mix(in srgb, #111 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  .hdr-dark {
+    background-color: color-mix(in srgb, rgb(40 40 42 / 0.72) calc(100% - var(--p) * 100%), var(--hdr-glass));
+    color: color-mix(in srgb, #d4d4d4 calc(100% - var(--t) * 100%), var(--color-ink));
+  }
+  /* Links not current: a step quieter than the pill's text, still AA on the lightest glass. */
+  .hdr-link {
+    color: color-mix(in srgb, #444 calc(100% - var(--t) * 100%), color-mix(in srgb, var(--color-ink) 72%, transparent));
+  }
+  .hdr-link:hover,
+  .hdr-link[aria-current] {
+    color: inherit;
+  }
   .page {
     @apply mx-auto w-full max-w-page px-gutter;
   }
