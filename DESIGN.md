@@ -44,7 +44,7 @@ Rules:
 
 | Level | Class | Size | Weight | Line height | Tracking | Usage |
 |---|---|---|---|---|---|---|
-| Display | `type-display` | clamp(2.75rem, 1.1rem + 7vw, 9.25rem) | 600 | 0.9 | -0.052em | Hero H1 |
+| Display | `type-display` | clamp(2.75rem, 1.1rem + 7vw, 9.25rem) | 600 | 0.9 | -0.052em | Hero H1; at `lg` it drops to clamp(4rem, 0.5rem + 5.4vw, 6.75rem) to sit beside the terminal |
 | H2 | `type-h2` | clamp(2.125rem, 1.4rem + 2.9vw, 4rem) | 600 | 1.0 | -0.04em | Section heads |
 | H3 | `type-h3` | 1.25rem | 500 | 1.25 | -0.02em | Project and card titles |
 | Numeral | `type-num` | clamp(3.5rem, 1.9rem + 6.4vw, 8rem) | 600 | 0.95 | -0.055em | The books, the brief count |
@@ -69,10 +69,10 @@ Rules:
 
 | # | Section | Job | Layout family |
 |---|---|---|---|
-| 1 | Hero + project console | Hook; show the model working | Poster headline, 5/6 split, interactive pipeline |
-| 2 | Open books | Proof, the strongest one, so it runs first | 4/7 split: argument left, figures and bars right |
+| 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones |
+| 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
 | 3 | Comparison | Why us | Table (desktop) / one block per row (phone) |
-| 4 | Work | Proof | 8/4 screenshots, then one numeral against nine briefs, then a three-column index |
+| 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
 | 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
 | 6 | FAQ | Remove doubt | Heading left, two-column Q&A, all open |
 | 7 | Footer | Navigate | Wordmark at poster scale, one row of links |
@@ -97,8 +97,9 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - 64px, sticky, one hairline under it. Wordmark with a yellow square; four links at `md` and up; "Hire us"; a popover menu below `md`.
 
 ### Project console (signature)
-- A 2px ink rule on top, then a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active.
-- Six step rows: the step name at 22px with an owner chip on the right (Person, AI, You, NEAR). The open row inverts to ink and shows what happens there and who owns it. Draft is open first.
+- A terminal, adapted from Aceternity UI's Terminal: an ink panel (it inverts to paper in dark mode), square corners, no shadow, no sound. Its title bar holds three square window marks and a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active.
+- Picking a tab types out that project's pipeline in mono: `brief` (echoing the example brief), then `run`, with the six steps as one line each (step, owner chip, a terse note). The full step detail lives in the hidden list, so the panel stays shorter than the hero text. Every line is laid out from the first frame and revealed in place, so nothing shifts. The cursor is a steady block (nothing loops); reduced motion shows the finished transcript.
+- The typed transcript is `aria-hidden`; a visually hidden ordered list carries the same six steps.
 - The AI chip is the only yellow in the panel: one step of six, visible at a glance.
 
 ### Comparison
@@ -106,19 +107,26 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - Phone: one block per row, our answer in a yellow chip, the other two below.
 
 ### Open books
-- A status line in mono (live, or the last reading), two figures at `type-num` on a 2px ink rule, monthly bars in ink (the current month is outlined, because it is partial), then up to five recent payouts with verify links.
+- A status line in mono (live, or the last reading), two figures on a 2px ink rule (`type-num` capped at 4.5rem here, so they support the argument instead of outweighing it), monthly bars in ink at 112px (the current month is outlined, because it is partial), then the three most recent payouts with verify links.
 - The bar chart is `aria-hidden` with a visually hidden table beside it.
 
-### Work
-- Screenshots in a 1px frame with the caption below the image, never a label over it; 8/4 on desktop.
-- Legion: the accepted count as one numeral against nine briefs in three ruled columns.
-- Other projects: a three-column index of name, one line, link.
+### Work ("Our work.")
+- The five projects multiagency.ai lists, in its order: Ping, City Nodes, NEAR Builders, NEAR Builders social, NEAR Builders Bot. A mono count sits opposite the heading.
+- One ruled index on a 2px ink rule: a mono number, the name at `type-h3` with one muted line, then the kind label and the site link on the right. The active row takes the `surface` fill.
+- From `md`, one sticky preview frame (16:10, 1px rule) follows the hovered or focused row; every image stays mounted and cross-fades. Phones get the list alone.
+- Images come from `npm run capture:work`: live-site captures for Ping, City Nodes and NEAR Builders; for the two projects without a public site, an illustration rendered from `scripts/illustrations/` in the page's own tokens, with placeholder bars for copy and the word "Illustration" on it, so it never reads as a real post or chat.
 
 ### Agency template
 - An ink command line with a copy button that reports "Copied" for 1.6s, then what the template ships as a 2 by 2 ruled list.
 
 ### FAQ
 - Heading left, two-column definition list, every answer visible. **(taste: accordion removed.)**
+
+### Contact page (`/contact`)
+- Every "Hire us" link lands here, never on the old site. Split like the hero: label, H2-size heading and lede, then a three-row "what happens next" list on the left; the form on the right under a 2px ink rule.
+- Fields: the kind of project as square chips (a radio group; the chosen one fills with ink), name and email side by side, company (optional), the brief with a hint line. Inputs are square, 1px ink at 40%, full ink on hover and focus.
+- Errors: validated with the same rules as the server, shown in mono under each field, the field tinted yellow at 15%, focus moved to the first. A failed send keeps the text and says so in the status line.
+- Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
 
 ### Footer
 - The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`, one row of links, the treasury account in mono.

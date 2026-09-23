@@ -45,10 +45,7 @@ export const services: Service[] = [
     summary: 'Agents and bots that do real work in Telegram, Discord and your own tools.',
     aiDrafts: 'Conversation flows, tool integrations, reply drafts.',
     peopleOwn: 'What the bot may do, its tone, testing with real users.',
-    proof: [
-      { label: 'NEAR Builders Bot', href: '#work-near-builders-bot' },
-      { label: 'IronClaw walkthroughs', href: '#work-legion' },
-    ],
+    proof: [{ label: 'NEAR Builders Bot', href: '#work-near-builders-bot' }],
   },
   {
     id: 'content',
@@ -59,7 +56,7 @@ export const services: Service[] = [
     summary: 'Explainers, launch videos and motion design, briefed, reviewed and delivered on schedule.',
     aiDrafts: 'Scripts, storyboards, caption passes.',
     peopleOwn: 'Direction, the edit, sign-off against the brief.',
-    proof: [{ label: 'Legion Creator Programme', href: '#work-legion' }],
+    proof: [],
   },
   {
     id: 'social',

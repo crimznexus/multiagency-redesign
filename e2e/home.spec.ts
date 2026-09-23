@@ -43,14 +43,22 @@ test.describe('project console', () => {
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
     const panel = page.getByRole('tabpanel')
     await expect(panel).toHaveAccessibleName(/Bots/)
-    await expect(panel.getByText('Conversation flows, tool integrations, reply drafts.')).toBeVisible()
+    await expect(panel.getByRole('listitem').filter({ hasText: 'Conversation flows, tool integrations' })).toHaveCount(
+      1,
+    )
   })
 
   test('exactly one of six steps is done by AI', async ({ page }) => {
     await page.goto('/')
-    const panel = page.getByRole('tabpanel')
-    await expect(panel.getByRole('listitem')).toHaveCount(6)
-    await expect(panel.getByText('AI', { exact: true })).toHaveCount(1)
+    const steps = page.getByRole('tabpanel').getByRole('listitem')
+    await expect(steps).toHaveCount(6)
+    await expect(steps.filter({ hasText: 'owned by AI' })).toHaveCount(1)
+  })
+
+  test('the terminal types the pipeline out in full', async ({ page }) => {
+    await page.goto('/')
+    const draft = page.getByRole('tabpanel').locator('[aria-hidden="true"]').getByText('Draft', { exact: true })
+    await expect(draft).toBeVisible({ timeout: 10_000 })
   })
 })
 
@@ -69,10 +77,21 @@ test('the console covers all four kinds of project', async ({ page }) => {
 })
 
 test.describe('work', () => {
-  test('featured projects, safe external links, reserved image sizes', async ({ page }) => {
+  test('the five projects the live site lists, in its order', async ({ page }) => {
     await page.goto('/')
-    const work = page.getByRole('region', { name: /Selected work/ })
-    await expect(work.getByRole('heading', { level: 3 }).first()).toHaveText('Ping')
+    const work = page.getByRole('region', { name: /Our work/ })
+    await expect(work.getByRole('heading', { level: 3 })).toHaveText([
+      'Ping',
+      'City Nodes',
+      'NEAR Builders',
+      'NEAR Builders social',
+      'NEAR Builders Bot',
+    ])
+  })
+
+  test('safe external links, reserved image sizes', async ({ page }) => {
+    await page.goto('/')
+    const work = page.getByRole('region', { name: /Our work/ })
     for (const link of await work.locator('a[target="_blank"]').all()) {
       await expect(link).toHaveAttribute('rel', /noopener/)
     }
@@ -81,13 +100,6 @@ test.describe('work', () => {
       await expect(img).toHaveAttribute('width', '1200')
       await expect(img).toHaveAttribute('height', '750')
     }
-  })
-
-  test('nine commissioned briefs, all accepted', async ({ page }) => {
-    await page.goto('/')
-    const briefs = page.getByRole('list', { name: /video briefs/ })
-    await expect(briefs.getByRole('listitem')).toHaveCount(9)
-    await expect(briefs.getByText('Accepted', { exact: true })).toHaveCount(9)
   })
 })
 
@@ -112,7 +124,7 @@ test('FAQ answers are all visible without toggles', async ({ page }) => {
 test('one label for the contact intent, and a skip link', async ({ page }) => {
   await page.goto('/')
   const labels = await page
-    .locator('a[href="https://multiagency.ai/contact"]')
+    .locator('a[href="/contact"]')
     .evaluateAll((as) => [...new Set(as.map((a) => a.textContent?.trim()))])
   expect(labels).toEqual(['Hire us'])
   await page.keyboard.press('Tab')

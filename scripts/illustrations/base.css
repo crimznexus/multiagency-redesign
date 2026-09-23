@@ -1,0 +1,55 @@
+/* Shared by the work illustrations: the site's tokens, at 1200 x 750. */
+@font-face {
+  font-family: "Geist";
+  font-weight: 400 700;
+  src: url("../../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-weight: 400 600;
+  src: url("../../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2")
+    format("woff2");
+}
+:root {
+  --bg: #f3f3f0;
+  --ink: #15140f;
+  --muted: #57564e;
+  --rule: rgb(21 20 15 / 0.14);
+  --surface: #e8e8e3;
+  --signal: #f3e11b;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+html,
+body {
+  width: 1200px;
+  height: 750px;
+  overflow: hidden;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Geist", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.mono {
+  font-family: "Geist Mono", monospace;
+}
+.label {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Placeholder copy: bars, never invented text. */
+.bar {
+  height: 10px;
+  background: var(--rule);
+}
+.bar.ink {
+  background: var(--ink);
+  opacity: 0.8;
+}

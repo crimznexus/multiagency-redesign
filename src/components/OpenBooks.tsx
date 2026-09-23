@@ -30,8 +30,8 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
       aria-labelledby="books-title"
       className="scroll-mt-16 border-t border-rule [contain-intrinsic-size:auto_1100px] [content-visibility:auto]"
     >
-      <div className="page grid12 py-section">
-        <div className="lg:col-span-4">
+      <div className="page grid12 py-section md:grid-cols-12">
+        <div className="md:col-span-5 lg:sticky lg:top-24 lg:self-start">
           <p className="type-label mb-5 text-muted">Open books</p>
           <h2 id="books-title" className="type-h2">
             Every payout is public.
@@ -50,28 +50,28 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
           </div>
         </div>
 
-        <div className="mt-10 lg:col-span-7 lg:col-start-6 lg:mt-0">
+        <div className="mt-10 md:col-span-7 md:mt-0 lg:col-span-6 lg:col-start-7">
           <p className="type-mono text-muted">
             {live
               ? `Live from ${TREASURY_ACCOUNT}`
               : `Live ledger unreachable. Showing the last reading, ${day(fetchedAt)}.`}
           </p>
 
-          <dl className="mt-4 grid grid-cols-2 border-t-2 border-ink">
-            <div className="flex flex-col-reverse pt-5 pr-5">
-              <dt className="mt-3 text-[15px] text-muted">payouts approved{start ? ` since ${start}` : ''}</dt>
-              <dd className="type-num">{payments}</dd>
+          <dl className="mt-3 grid grid-cols-2 border-t-2 border-ink">
+            <div className="flex flex-col-reverse pt-4 pr-5">
+              <dt className="mt-2 text-sm text-muted">payouts approved{start ? ` since ${start}` : ''}</dt>
+              <dd className="type-num text-[clamp(2.75rem,1.6rem+3vw,4.5rem)]">{payments}</dd>
             </div>
-            <div className="flex flex-col-reverse border-l border-rule pt-5 pr-5 pl-5 sm:pl-6">
-              <dt className="mt-3 text-[15px] text-muted">builders paid</dt>
-              <dd className="type-num">{contributors}</dd>
+            <div className="flex flex-col-reverse border-l border-rule pt-4 pr-5 pl-5 sm:pl-6">
+              <dt className="mt-2 text-sm text-muted">builders paid</dt>
+              <dd className="type-num text-[clamp(2.75rem,1.6rem+3vw,4.5rem)]">{contributors}</dd>
             </div>
           </dl>
 
-          <figure className="mt-14">
-            <div aria-hidden="true" className="flex h-40 items-end gap-3 border-b-2 border-ink sm:h-52 sm:gap-6">
+          <figure className="mt-9">
+            <div aria-hidden="true" className="flex h-24 items-end gap-3 border-b-2 border-ink sm:h-28 sm:gap-4">
               {byMonth.map(({ month: m, count }) => (
-                <div key={m} className="flex h-full flex-1 flex-col justify-end gap-2">
+                <div key={m} className="flex h-full flex-1 flex-col justify-end gap-1.5">
                   <span className="type-mono font-medium">{count}</span>
                   <span
                     className={`bar-grow w-full ${m === current ? 'border-t-2 border-ink bg-ink/25' : 'bg-ink'}`}
@@ -80,14 +80,14 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
                 </div>
               ))}
             </div>
-            <div aria-hidden="true" className="flex gap-3 pt-2.5 sm:gap-6">
+            <div aria-hidden="true" className="flex gap-3 pt-2 sm:gap-4">
               {byMonth.map(({ month: m }) => (
                 <span key={m} className="type-mono flex-1 text-muted">
                   {month(m)}
                 </span>
               ))}
             </div>
-            <figcaption className="mt-4 text-sm text-muted">
+            <figcaption className="mt-3 text-sm text-muted">
               Payouts per month{byMonth.length > 0 ? `, ${current.slice(0, 4)}` : ''}. This month to date.
             </figcaption>
             <table className="sr-only">
@@ -113,8 +113,8 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
           </figure>
 
           {latest.length > 0 && (
-            <table className="mt-14 w-full border-collapse text-left">
-              <caption className="type-label border-t-2 border-ink pt-4 pb-1 text-left text-muted">
+            <table className="mt-9 w-full border-collapse text-left">
+              <caption className="type-label border-t-2 border-ink pt-3 pb-1 text-left text-muted">
                 Latest payouts
               </caption>
               <thead className="sr-only">
@@ -125,10 +125,10 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
                 </tr>
               </thead>
               <tbody>
-                {latest.map((p) => (
+                {latest.slice(0, 3).map((p) => (
                   <tr key={p.id} className="border-t border-rule">
-                    <td className="type-mono py-3.5 pr-4 text-muted">#{p.id}</td>
-                    <td className="py-3.5 pr-4">
+                    <td className="type-mono py-2 pr-4 text-muted">#{p.id}</td>
+                    <td className="py-2 pr-4">
                       <ExternalLink
                         href={`${EXPLORER}${p.recipient}`}
                         className="type-mono underline decoration-rule underline-offset-4 hover:decoration-ink"
@@ -136,7 +136,7 @@ export function OpenBooks({ ledger }: { ledger: LedgerResult }) {
                         {shortAccount(p.recipient)}
                       </ExternalLink>
                     </td>
-                    <td className="type-mono py-3.5 text-right whitespace-nowrap text-muted">{day(p.paidAt)}</td>
+                    <td className="type-mono py-2 text-right whitespace-nowrap text-muted">{day(p.paidAt)}</td>
                   </tr>
                 ))}
               </tbody>

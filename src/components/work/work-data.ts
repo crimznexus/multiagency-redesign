@@ -1,121 +1,72 @@
 /**
- * Selected work. Descriptions come from each project's own site; the Legion
- * briefs come from the agency's public payment record (one approved payout
- * per accepted brief). NEAR Builders' figures are from its home page as
- * captured in September 2026.
+ * Our work: the five projects multiagency.ai lists, in its order.
+ * Descriptions come from each project's own site. Images are the live sites
+ * as captured in September 2026, or, for the two without a public site, an
+ * illustration in the site's own style (scripts/illustrations/).
  */
 
-export interface Brief {
-  id: string
-  title: string
-  format: string
-}
-
-export type Visual = { kind: 'screenshot'; image: string; alt: string } | { kind: 'briefs'; briefs: Brief[] }
-
-export interface FeaturedProject {
+export interface Project {
+  /** Anchor id, `#work-<id>` */
   id: string
   name: string
-  headline: string
+  /** One-word kind, shown as a label */
+  kind: string
   description: string
-  tags: string[]
   link?: { href: string; label: string }
-  /** Hard numbers shown as the card's stat row (from the live site or the payment record) */
-  stats: { value: string; label: string }[]
-  visual: Visual
-  caption: string
+  image: { name: string; alt: string }
 }
 
-export interface OtherProject {
-  name: string
-  description: string
-  tags: string[]
-  link?: { href: string; label: string }
-}
-
-export const featured: FeaturedProject[] = [
+export const projects: Project[] = [
   {
     id: 'ping',
     name: 'Ping',
-    headline: 'Payments from any chain',
+    kind: 'Product',
     description:
       'A chain-abstracted onramp: buy, sell or pay with a card or Cash App and receive tokens on any chain, in one flow.',
-    tags: ['Product', 'Web', 'Payments'],
     link: { href: 'https://onramp.pingpay.io', label: 'onramp.pingpay.io' },
-    stats: [
-      { value: 'Live', label: 'onramp in production' },
-      { value: '2', label: 'ways to pay: card, Cash App' },
-    ],
-    visual: {
-      kind: 'screenshot',
-      image: 'ping',
-      alt: 'Ping’s onramp: a buy, sell and pay widget converting USD to NEAR.',
+    image: { name: 'ping', alt: 'Ping’s onramp: a buy, sell and pay widget converting USD to NEAR.' },
+  },
+  {
+    id: 'city-nodes',
+    name: 'City Nodes',
+    kind: 'Product',
+    description: 'NEAR validators tied to real places: each city, state or country runs a node people can stake to.',
+    link: { href: 'https://citynode.app', label: 'citynode.app' },
+    image: {
+      name: 'city-nodes',
+      alt: 'The City Nodes home page: “What are City Nodes?”, with the four steps of staking to a place.',
     },
-    caption: 'Live site, captured September 2026',
   },
   {
     id: 'nearbuilders',
     name: 'NEAR Builders',
-    headline: 'Build what’s next, together',
+    kind: 'Platform',
     description:
       'An open network where builders find collaborators, discover open projects and ship community-owned products across NEAR.',
-    tags: ['Platform', 'Web', 'Community'],
     link: { href: 'https://nearbuilders.org', label: 'nearbuilders.org' },
-    stats: [
-      { value: '113', label: 'builders on the network' },
-      { value: '102', label: 'projects listed' },
-    ],
-    visual: {
-      kind: 'screenshot',
-      image: 'nearbuilders',
+    image: {
+      name: 'nearbuilders',
       alt: 'The NEAR Builders home page: “Build what’s next, together”, with builder and project counts.',
     },
-    caption: 'Live site, captured September 2026',
   },
   {
-    id: 'legion',
-    name: 'Legion Creator Programme',
-    headline: 'Explainers and release videos',
-    description:
-      'Nine commissioned videos for NEAR AI and IronClaw: cinematic explainers, motion-design release videos and real bot walkthroughs. Each had a written brief, a named reviewer, and payment on acceptance.',
-    tags: ['Content', 'Video', 'Motion'],
-    stats: [
-      { value: '9/9', label: 'briefs accepted' },
-      { value: '9', label: 'payouts on-chain' },
-    ],
-    visual: {
-      kind: 'briefs',
-      briefs: [
-        { id: 'T-001', title: 'IronClaw explainer', format: 'Cinematic · mascot-led' },
-        { id: 'T-002', title: 'NEAR AI argument', format: 'On-camera cut' },
-        { id: 'T-003', title: 'NEAR AI argument', format: 'On-camera · 2nd treatment' },
-        { id: 'T-004', title: 'NEAR AI argument', format: 'Visual cut · captions' },
-        { id: 'T-005', title: 'IronClaw Telegram agent', format: 'Walkthrough · real bot' },
-        { id: 'T-006', title: 'IronClaw release alerts', format: 'Walkthrough' },
-        { id: 'T-007', title: 'IronClaw 1.2 release', format: 'Motion design · VO' },
-        { id: 'T-008', title: 'IronClaw × Pikespeak', format: 'Transaction trace' },
-        { id: 'T-009', title: 'NEAR AI argument', format: 'Cinematic montage' },
-      ],
-    },
-    caption: 'From the public payment record',
-  },
-]
-
-export const others: OtherProject[] = [
-  {
-    name: 'City Nodes',
-    description: 'NEAR validators tied to real places: each city, state or country runs a node people can stake to.',
-    tags: ['Product', 'Web3'],
-    link: { href: 'https://citynode.app', label: 'citynode.app' },
-  },
-  {
-    name: 'NEAR Builders Bot',
-    description: 'An assistant for the NEAR Builders community.',
-    tags: ['Bots', 'Automation'],
-  },
-  {
+    id: 'near-builders-social',
     name: 'NEAR Builders social',
+    kind: 'Social',
     description: 'Ongoing social media management for NEAR Builders.',
-    tags: ['Social', 'Content'],
+    image: {
+      name: 'near-builders-social',
+      alt: 'Illustration: a week of posts, replies and scheduled drafts for NEAR Builders.',
+    },
+  },
+  {
+    id: 'near-builders-bot',
+    name: 'NEAR Builders Bot',
+    kind: 'Bots',
+    description: 'An assistant for the NEAR Builders community.',
+    image: {
+      name: 'near-builders-bot',
+      alt: 'Illustration: a chat with the NEAR Builders Bot suggesting open projects.',
+    },
   },
 ]

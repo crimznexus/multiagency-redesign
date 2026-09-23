@@ -38,10 +38,21 @@ function RootComponent() {
   )
 }
 
+/**
+ * First-paint colours, before any stylesheet arrives. The meta tells the
+ * browser the page has a dark scheme, so its default canvas is not white; the
+ * inline rule paints the exact paper. Without these, a slow stylesheet (the
+ * dev server serves it separately) shows a white frame in dark mode.
+ * Keep the two values in step with --color-bg in app.css.
+ */
+const firstPaint = 'html{background:#f3f3f0}@media (prefers-color-scheme:dark){html{background:#13120e}}'
+
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <head>
+        <meta name="color-scheme" content="light dark" />
+        <style>{firstPaint}</style>
         <HeadContent />
       </head>
       <body>
