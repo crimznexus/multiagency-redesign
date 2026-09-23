@@ -69,7 +69,7 @@ Rules:
 
 | # | Section | Job | Layout family |
 |---|---|---|---|
-| 1 | Hero + pipeline graph | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
+| 1 | Hero + pipeline graph | Hook; show the model working | Full screen on load (`min-h-svh`, content centred; the header floats over its top), then as the page scrolls the video frame draws in over the first 70vh to a card on the gutters with 28px corners (`hero-settle`, a root scroll timeline; full bleed where unsupported or under reduced motion). Split from `md`: headline, value prop and CTAs left, pipeline graph right (6/6 at `md`, 7/5 at `lg`); stacked on phones. Full bleed behind it, the loop |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
 | 3 | Comparison | Why us | Table left (7 cols), argument right (4 cols); on phones the same table, marks only for the other two columns |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
@@ -154,7 +154,7 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 
 ### Footer
 - A card set apart from the page (client request): inset by the gutter on the sides and below, 28px corners, a 10% ink hairline, and a surface a shade above black (#0D0D0C).
-- The wordmark at `clamp(2.5rem, 12vw, 12.5rem)`, filled with the loop (see above).
+- The wordmark at `clamp(2.5rem, 12vw, 12.5rem)`, centred in the card and filled with the loop (see above). It is centred optically: a `padding-right` of 0.1em offsets the tight tracking and the M and y sidebearings, so the visible letters sit evenly (measured 169/167px at 1440, 57/57px at 390).
 - From `md`: one row, the links left and the treasury account in mono right.
 - Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 
@@ -170,6 +170,8 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 | Micro | 150 to 200ms | cubic-bezier(0.4, 0, 0.2, 1) | Hover fill and colour, button press |
 | Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, pipeline graph (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
 | Scroll | scroll-driven | linear | Bars draw up as the chart enters (`animation-timeline: view()`, progressive enhancement) |
+
+**Smooth scrolling (client request):** Lenis (`src/lib/use-smooth-scroll.ts`, lerp 0.085) eases wheel and trackpad scrolling site-wide; touch keeps the phone's native momentum. The page still scrolls natively underneath, so the sticky header, the hero's scroll timeline and the observers are unaffected; same-page links glide and respect scroll margins. `html.lenis` turns CSS `scroll-behavior` off so the two never fight. Off under reduced motion.
 
 Rules: only `opacity` and `transform` animate. Layout never changes after first paint: both fonts are preloaded, and the font stacks are pinned in the base layer (see `app.css`) so no stylesheet order can swap them. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
 
