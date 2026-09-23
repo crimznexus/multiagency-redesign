@@ -167,3 +167,12 @@ test('the page never shifts while loading (CLS)', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' })
   expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02)
 })
+
+test('the browser toolbar and first paint match the page in both modes', async ({ page }) => {
+  await page.goto('/')
+  const themes = await page
+    .locator('meta[name="theme-color"]')
+    .evaluateAll((ms) => ms.map((m) => `${m.getAttribute('media')} ${m.getAttribute('content')}`))
+  expect(themes).toEqual(['(prefers-color-scheme: light) #F3F3F0', '(prefers-color-scheme: dark) #13120E'])
+  await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'light dark')
+})
