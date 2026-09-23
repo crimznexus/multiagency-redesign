@@ -83,7 +83,7 @@ Section labels are rationed to two on the page **(taste: eyebrow rule)**: "Open 
 
 ## 5. Components
 
-Shape rule (one documented system): **nothing is rounded**, except the header. Every control, chip, image frame and fill has square corners; the header's circles and pills and the hero's two buttons are the deliberate exceptions **(client request: header as in the motionsites.ai reference)**.
+Shape rule (one documented system): **nothing is rounded**, except the header. Every control, chip, image frame and fill has square corners; the header's circles and pills, the hero's two buttons and the footer card are the deliberate exceptions **(client request: header as in the motionsites.ai reference)**.
 
 ### Button (`.btn` + `.btn-signal` | `.btn-ghost`, `.btn-sm`)
 - 48px min height (40 for `btn-sm`), padding-x 20px, 1px ink border, Geist 500 16px.
@@ -108,7 +108,7 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 - `public/hero/`: `loop.webm` (VP9, ~300 KB) and `loop.mp4` (H.264, ~380 KB), re-encoded at 720p from the 13.8 MB 1080p original, plus `loop-poster.webp` (the first frame, 52 KB). One component plays it everywhere: `LoopVideo`.
 - The poster paints first (preloaded on `/`; it is the LCP element). The video loads only after hydration (`preload="none"`): at once in the hero, and on scroll into view in the footer. Each pauses out of view.
 - Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the pipeline side, behind the graph.
-- Footer: the wordmark is filled with it. White-on-black type set to `mix-blend-mode: multiply` sits over the video, so the footage shows only through the letters and the black around them is the page. It is cropped to the band of sky and digits (`object-position: 50% 22%`) and clipped by a pixel at the bottom so no hairline shows.
+- Footer: the wordmark is filled with it. White-on-black type set to `mix-blend-mode: multiply` sits over the video, so the footage shows only through the letters; that group is then set to `lighten` onto the card, where its black changes nothing, so no box shows round the word. It is cropped to the band of sky and digits (`object-position: 50% 22%`) and clipped by a pixel at the bottom so no hairline shows.
 - It is the only thing that loops. Reduced motion and Save-Data keep the still poster. **Accepted debt:** there is no pause button (client request), so WCAG 2.2.2 (pause, stop, hide) is met only through reduced motion.
 
 ### Pipeline graph (signature, `ProjectPipeline`) **(client request: replaces the terminal)**
@@ -152,7 +152,8 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 - Success replaces the form with a yellow check square and "Brief received.", which takes focus. Without scripts the form posts natively and the result shows through `:target`.
 
 ### Footer
-- The wordmark at `clamp(2.5rem, 13.5vw, 13.5rem)`, filled with the loop (see above).
+- A card set apart from the page (client request): inset by the gutter on the sides and below, 28px corners, a 10% ink hairline, and a surface a shade above black (#0D0D0C).
+- The wordmark at `clamp(2.5rem, 12vw, 12.5rem)`, filled with the loop (see above).
 - From `md`: one row, the links left and the treasury account in mono right.
 - Phones: two labelled columns under a hairline, **Site** (Work, Open books, Template, FAQ) and **Elsewhere** (Open source, X), then the treasury account on its own ruled line with a "Treasury" label. The account never breaks mid-name; on a narrow phone it drops below its label. Group labels are visually hidden from `md`.
 

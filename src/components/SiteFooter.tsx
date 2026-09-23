@@ -13,22 +13,25 @@ const item = 'inline-flex min-h-11 items-center text-[15px] text-muted transitio
 const groupLabel = 'type-label mb-1 text-[11px] text-muted md:sr-only'
 
 /**
- * The wordmark at poster scale, filled with the site's loop: the video sits
- * behind white-on-black type set to multiply, so it shows only through the
- * letters and the black around them matches the page. Then the links. From `md`: one row, links
- * left, treasury account right. On phones: two labelled columns (Site,
+ * A card set apart from the page: inset by the gutter, soft 28px corners, a
+ * hairline and a surface a shade above black. In it, the wordmark at poster
+ * scale, filled with the site's loop, which shows only through the letters
+ * (see the blends below). Then
+ * the links. From `md`: one row, links left, treasury account right. On phones: two labelled columns (Site,
  * Elsewhere) under a hairline, then the treasury account on its own ruled
  * line, so nothing wraps unevenly.
  */
 export function SiteFooter() {
   return (
-    <footer>
-      <div className="page pt-10 pb-8">
-        {/* Clipped by a pixel at the bottom: the type's black box can round short of the video's, which showed as a hairline. */}
-        <div aria-hidden="true" className="relative isolate [clip-path:inset(0_0_1px_0)]">
+    <footer className="page pb-gutter">
+      <div className="rounded-[28px] border border-ink/10 bg-[#0d0d0c] px-[clamp(1.25rem,4vw,3rem)] pt-[clamp(1.75rem,4vw,3rem)] pb-6 md:pb-8">
+        {/* Two blends. Inside this group, white type on black set to multiply leaves the video in the letters and
+            black round them; the group then lightens onto the card, where black changes nothing, so no box shows.
+            Clipped by a pixel at the bottom: the type's box can round short of the video's, which showed as a hairline. */}
+        <div aria-hidden="true" className="relative mix-blend-lighten [clip-path:inset(0_0_1px_0)]">
           {/* Cropped to the band of sky and falling digits, the brightest part of the frame. */}
           <LoopVideo className="absolute inset-0 size-full object-cover object-[50%_22%]" />
-          <p className="relative bg-black font-semibold tracking-[-0.065em] text-[clamp(2.5rem,13.5vw,13.5rem)] leading-[0.9] text-white mix-blend-multiply [padding-bottom:0.06em]">
+          <p className="relative bg-black font-semibold tracking-[-0.065em] text-[clamp(2.5rem,12vw,12.5rem)] leading-[0.9] text-white mix-blend-multiply [padding-bottom:0.06em]">
             MultiAgency
           </p>
         </div>
