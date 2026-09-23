@@ -71,7 +71,7 @@ Rules:
 |---|---|---|---|
 | 1 | Hero + project console | Hook; show the model working | Split from `md`: headline, value prop and CTAs left, pipeline terminal right (6/6 at `md`, 7/5 at `lg`); stacked on phones |
 | 2 | Open books | Proof, the strongest one, so it runs first | Split from `md` (5/7, then 5/6 at `lg`): argument left, compact figures, bars and three payouts right |
-| 3 | Comparison | Why us | Table (desktop) / one block per row (phone) |
+| 3 | Comparison | Why us | 4/8 split: argument beside a tight table (desktop); label and chip rows (phone) |
 | 4 | Work | Proof | Ruled, numbered index (7 cols) beside one sticky preview frame (5 cols) |
 | 5 | Agency template | Second audience (founders) | 5/6 split with a command line |
 | 6 | FAQ | Remove doubt | Heading left, one-column list of questions that slide open |
@@ -103,8 +103,9 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 - The AI chip is the only yellow in the panel: one step of six, visible at a glance.
 
 ### Comparison
-- Desktop: a real `<table>` with a 2px ink head rule. The MultiAgency column is filled yellow, so the answer reads first; losing cells in the other two columns are struck through.
-- Phone: one block per row, our answer in a yellow chip, the other two below.
+- Five rows, two or three words per cell, so it reads at a glance. From `lg` the heading and one-line argument sit in 4 columns beside the table (8 columns); below `lg` they stack above it.
+- Desktop: a real `<table>` with a 2px ink head rule and 12px cell padding. The MultiAgency column is filled yellow, so the answer reads first; losing cells in the other two columns are struck through.
+- Phone: one row per line pair: the label with our answer as a yellow chip on the right, then "Agency" and "AI tools" in one muted line below.
 
 ### Open books
 - A status line in mono (live, or the last reading), two figures on a 2px ink rule (`type-num` capped at 4.5rem here, so they support the argument instead of outweighing it), monthly bars in ink at 112px (the current month is outlined, because it is partial), then the three most recent payouts with verify links.
