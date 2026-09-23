@@ -10,11 +10,16 @@ test('home renders the headline', async ({ page }) => {
 
 test('home has no WCAG 2.2 AA violations', async ({ page }) => {
   await page.goto('/')
+  // Hovering the pipeline pauses its cycle, so the graph holds still while it's measured.
+  await page.getByRole('tabpanel').hover()
   // Measure the settled page: mid-fade, the hero's text is part-transparent and reads as low contrast.
   await page.waitForFunction(() =>
     document
       .getAnimations()
-      .every((a) => !/^(rise|pg-)/.test((a as CSSAnimation).animationName) || a.playState === 'finished'),
+      .every(
+        (a) =>
+          !/^(rise|pg-(draw|spark|pop|fade))$/.test((a as CSSAnimation).animationName) || a.playState === 'finished',
+      ),
   )
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze()
   expect(results.violations).toEqual([])
@@ -88,6 +93,22 @@ test.describe('project console', () => {
     await expect(steps.filter({ hasText: 'owned by AI' })).toHaveCount(1)
   })
 
+  test('moves on to the next kind of project once the graph has drawn', async ({ page }) => {
+    await page.goto('/')
+    const selected = page.getByRole('tab', { selected: true })
+    await expect(selected).toHaveAccessibleName('Product')
+    await expect(selected).toHaveAccessibleName('Bots', { timeout: 10_000 })
+    await expect(page.getByRole('tabpanel')).toHaveAccessibleName('Bots')
+  })
+
+  test('stays on one kind under reduced motion', async ({ browser }) => {
+    const page = await browser.newPage({ reducedMotion: 'reduce' })
+    await page.goto('/')
+    await page.waitForTimeout(7000)
+    await expect(page.getByRole('tab', { selected: true })).toHaveAccessibleName('Product')
+    await page.close()
+  })
+
   test('the graph draws all six steps, with one AI node', async ({ page }) => {
     await page.goto('/')
     const graph = page.getByRole('tabpanel').locator('[aria-hidden="true"]')
@@ -115,7 +136,8 @@ test('the comparison is one real table at every width', async ({ page, isMobile 
 test('the console covers all four kinds of project', async ({ page }) => {
   await page.goto('/')
   const tabs = page.getByRole('tablist', { name: 'Choose a kind of project' }).getByRole('tab')
-  await expect(tabs).toHaveText(['Product', 'Bots', 'Video', 'Social'])
+  for (const [i, name] of ['Product', 'Bots', 'Video', 'Social'].entries())
+    await expect(tabs.nth(i)).toHaveAccessibleName(name)
 })
 
 test.describe('work', () => {

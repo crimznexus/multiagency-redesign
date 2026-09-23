@@ -35,7 +35,7 @@ One ink, one ground, one accent. **The page is dark only**: there is no light mo
 Rules:
 - The yellow never carries text on the ground; it is always a fill with on-accent text on top.
 - Two rule weights only: 2px ink to open a block, 1px `rule` between rows.
-- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the pipeline graph and the scrolled header.
+- No shadows, no gradients, no glows. Depth comes from rules and fills. Exceptions: the header's soft shadow, the hero video's gradient, and frosted glass on the scrolled header and the scrolled header.
 
 ## 3. Typography
 
@@ -98,23 +98,24 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 - Floating and sticky, 72px, with no bar of its own: the hero pulls up behind it (`-mt-18 pt-18`), so the video runs to the top of the page.
 - From `md`, one centred row: the mark in a light glass circle (40 to 46px), a white pill of links (Home, Work, Open books, Template, FAQ), and "Hire us" as a dark pill (#28282a, text #c8c8c8; lifts 1px on hover). All three carry one soft shadow, `0 4px 14px rgb(0 0 0/0.16)`.
 - The current link is #2e2e2e with three 3px dots under it; the rest are #6b6b6b (the reference's 50% opacity fails contrast). On the home page the dots follow the section crossing the middle of the viewport, and sit under Home above the first one.
-- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into the pipeline panel's dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The "Hire us" pill and the phone menu button start from dark glass (#28282a at 72%) instead of white.
+- **Glass, driven by scroll:** the header is never solid. At the top it is light frosted glass (white at 70%, 6px blur, dark text); as the page scrolls it deepens with the scroll itself, not on a timer, into dark glass (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline, light text) over the first 200px, and lightens again on the way back up. SiteHeader writes the progress as `--p` (0 to 1) once per frame; `.hdr*` in `app.css` mixes every colour, blur and shadow from it. Text flips from dark to light over the middle of the range (`--t`), so it only briefly crosses the mid-grey glass. The "Hire us" pill and the phone menu button start from dark glass (#28282a at 72%) instead of white.
 - Phones: the mark left and a round dark menu button right, both 48px. The menu is a popover covering the screen (black at 60%, 6px blur) with the mark and a white close button above it, and a white sheet (28px radius) of the same links, then "Hire us" as a full-width dark pill and "Apply to join". Tapping the dimmed area, Esc or a link closes it.
 
 ### The loop (hero video and footer wordmark) **(client decision: final)**
 - One piece of footage for the whole site: dark dunes under a violet sky, digits falling through it, with film grain (10 s, loops). It is the motionsites.ai reference clip, a Higgsfield generation. It is **self-hosted**, not hotlinked from the reference's CloudFront URL, so the site never depends on someone else's account.
 - `public/hero/`: `loop.webm` (VP9, ~300 KB) and `loop.mp4` (H.264, ~380 KB), re-encoded at 720p from the 13.8 MB 1080p original, plus `loop-poster.webp` (the first frame, 52 KB). One component plays it everywhere: `LoopVideo`.
 - The poster paints first (preloaded on `/`; it is the LCP element). The video loads only after hydration (`preload="none"`): at once in the hero, and on scroll into view in the footer. Each pauses out of view.
-- Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the pipeline side and glows through its frosted glass.
+- Hero: full bleed behind the hero, under a gradient that keeps the copy on solid ground (the page colour under the text column from `md`, darkening downward on phones); the footage shows in full on the pipeline side, behind the graph.
 - Footer: the wordmark is filled with it. White-on-black type set to `mix-blend-mode: multiply` sits over the video, so the footage shows only through the letters and the black around them is the page. It is cropped to the band of sky and digits (`object-position: 50% 22%`) and clipped by a pixel at the bottom so no hairline shows.
 - It is the only thing that loops. Reduced motion and Save-Data keep the still poster. **Accepted debt:** there is no pause button (client request), so WCAG 2.2.2 (pause, stop, hide) is met only through reduced motion.
 
 ### Pipeline graph (signature, `ProjectPipeline`) **(client request: replaces the terminal)**
-- A frosted-glass panel (black at 35%, 24px blur, 1.5× saturation, a 15% ink hairline) with light text, so the hero video glows through it blurred; square corners. The hero's fade uses `backwards` fill, because a held fill makes Chrome treat the wrapper as a backdrop root and the blur would show nothing.
-- Top: a tab strip of four kinds of project (roving tabindex, arrows, Home/End, `aria-selected`), underlined when active, and "6 steps · 1 AI" in mono when there is room. Then the example brief in mono.
-- The graph: the six steps (Brief, Draft, Build, Review, Accept, Paid) as nodes on one smooth curve (Catmull-Rom through fixed points in a 2:1 box), labels alternating below and above with the owner in mono under each name. Nodes are hollow ink rings; the AI node is the only yellow: a filled dot with a soft glow and a yellow AI chip. Under it, one line: "AI drafts <that service's first two drafts>. People do the rest."
-- Motion, on load and on every tab change: the line draws itself in 2.2s at an even pace, a short yellow spark rides its tip and runs off the end, and each node pops in (opacity and scale, 450ms) as the spark reaches it, 0.4s apart; the note fades in last. It plays once, nothing loops. Styles are `.pg-*` in `app.css`: the final state is the default, so reduced motion shows the finished graph. Dashes use `pathLength=1`, without `non-scaling-stroke` (which makes Chrome measure dashes in pixels).
-- The graph is `aria-hidden`; a visually hidden ordered list carries the six steps with full detail and owner, and the brief is real text.
+- No panel (client request): the graph sits straight on the hero video. Labels carry a soft dark text shadow so they hold over the brighter parts of the footage. No brief line, no step count, no closing note; the brief is visually hidden text.
+- Left: the current kind of project ("PRODUCT", "BOTS", ...) set vertically in mono caps, reading bottom to top, fading in on each change.
+- The graph: the six steps (Brief, Draft, Build, Review, Accept, Paid) as nodes on one smooth curve (Catmull-Rom through fixed points in a 2:1 box), labels alternating below and above with the owner in mono under each name. Nodes are hollow ink rings; the AI node is the only yellow: a filled dot with a soft glow and a yellow AI chip.
+- Under it, four dots are the tabs (ARIA tabs: roving tabindex, arrows, Home/End, each named by its kind; 36×44px targets). The active dot is a short pill that fills over one 6s cycle (the 2.4s drawing plus a hold); when it fills, the next kind takes over, round and round. Hovering or focusing the graph pauses the cycle; under reduced motion the fill never runs, so the graph stays on one kind until a dot is picked.
+- Motion, on every change of kind: the line draws itself in 2.2s at an even pace, a short yellow spark rides its tip and runs off the end, and each node pops in (opacity and scale, 450ms) as the spark reaches it, 0.4s apart. Styles are `.pg-*` in `app.css`; the final state is the default, so reduced motion shows the finished graph. Dashes use `pathLength=1`, without `non-scaling-stroke` (which makes Chrome measure dashes in pixels).
+- The graph and the side name are `aria-hidden`; a visually hidden brief and ordered list carry the six steps with full detail and owner.
 
 ### Comparison
 - Five rows, two or three words per cell, so it reads at a glance. From `lg` the heading and one-line argument sit in 4 columns beside the table (8 columns); below `lg` they stack above it.
@@ -170,7 +171,7 @@ Rules: only `opacity` and `transform` animate. Layout never changes after first 
 
 ## 7. Depth & Surface
 
-Almost no depth. Rules separate content inside a section and fills mark state; **sections have no dividers between them**, only space (client request). The whole page sits under a static film grain (`body::after`: fixed, 11% opacity, one 160px tile of SVG fractal noise, under the header at z-30) so the black sections share the loop's texture. The only elevation is frosted glass (pipeline graph, scrolled header).
+Almost no depth. Rules separate content inside a section and fills mark state; **sections have no dividers between them**, only space (client request). The whole page sits under a static film grain (`body::after`: fixed, 11% opacity, one 160px tile of SVG fractal noise, under the header at z-30) so the black sections share the loop's texture. The only elevation is frosted glass (the scrolled header).
 
 ## 8. Accessibility Constraints & Accepted Debt
 

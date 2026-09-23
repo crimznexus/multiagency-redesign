@@ -276,6 +276,15 @@
     opacity: 0;
   }
 }
+@keyframes pg-fill {
+  from {
+    scale: 0 1;
+  }
+}
+/* Without motion the timer has nothing to show: the active dot is solid. */
+.pg-timer {
+  scale: 1 1;
+}
 
 /* The phone menu sheet settles in under the header. */
 @keyframes menu-in {
@@ -307,8 +316,18 @@
     animation: pg-pop 450ms var(--ease-ui) backwards;
     animation-delay: calc(0.15s + var(--i) * 0.4s);
   }
-  .pg-note {
-    animation: pg-fade 500ms var(--ease-ui) 2.1s backwards;
+  .pg-name {
+    animation: pg-fade 400ms var(--ease-ui) backwards;
+  }
+  /* The active dot fills over one cycle: the 2.4s drawing, then a 3.6s hold. Its end moves the graph on
+     to the next kind of project. Hover or focus pauses it; under reduced motion it never runs, so the
+     graph stays on one kind until a dot is picked. */
+  .pg-timer {
+    animation: pg-fill 6s linear both;
+  }
+  .pg-cycle:hover .pg-timer,
+  .pg-cycle:focus-within .pg-timer {
+    animation-play-state: paused;
   }
   .rise {
     /* backwards, not both: a fill that outlives the fade makes Chrome treat the element as a backdrop root,
