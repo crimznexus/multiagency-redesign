@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Tooling pages (the work illustrations) are not part of the site: never scan them. */
+@source not "../../scripts";
 
 /*
  * Self-hosted, subset variable fonts (rebuild with `npm run subset:font`).
@@ -55,6 +57,15 @@
 @layer base {
   :root {
     color-scheme: dark;
+    /*
+     * The fonts again, one layer up. In dev, TanStack Start's first stylesheet
+     * appends a second Tailwind build with the default theme after ours, in
+     * the same theme layer, so its system-font stacks would win until the real
+     * stylesheet arrives and the text would re-wrap. The base layer beats the
+     * theme layer whatever the order. Keep in step with @theme above.
+     */
+    --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
   }
 
   html {
@@ -162,11 +173,13 @@
   line-height: 1.4;
 }
 
-/* Hero load-in: one staggered reveal, nothing loops (DESIGN.md §6). */
+/*
+ * Hero load-in: one staggered fade, nothing loops (DESIGN.md §6). Opacity
+ * only: nothing moves on load, so a reload never looks like a layout jump.
+ */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
   }
 }
 @keyframes grow {
@@ -177,7 +190,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .rise {
-    animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise 500ms var(--ease-ui) both;
   }
   /* Bars draw themselves as the chart scrolls in, where the browser supports it. */
   @supports (animation-timeline: view()) {

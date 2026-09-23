@@ -40,7 +40,7 @@ Rules:
 ## 3. Typography
 
 
-**Geist Variable** for words; **Geist Mono Variable** for figures, IDs and labels. **(taste: replaces Inter + JetBrains Mono, which the skill flags as the default; Geist + Geist Mono is its recommended pairing.)** Both self-hosted and subset (12 KB + 9 KB, `npm run subset:font`); Geist is preloaded.
+**Geist Variable** for words; **Geist Mono Variable** for figures, IDs and labels. **(taste: replaces Inter + JetBrains Mono, which the skill flags as the default; Geist + Geist Mono is its recommended pairing.)** Both self-hosted and subset (12 KB + 9 KB, `npm run subset:font`); both are preloaded, since both are in the first screen.
 
 | Level | Class | Size | Weight | Line height | Tracking | Usage |
 |---|---|---|---|---|---|---|
@@ -141,10 +141,10 @@ Shape rule (one documented system): **nothing is rounded.** Every control, chip,
 | Type | Duration | Easing | Usage |
 |---|---|---|---|
 | Micro | 150 to 200ms | cubic-bezier(0.4, 0, 0.2, 1) | Hover fill and colour, button press |
-| Entrance | 900ms, staggered by 80ms | cubic-bezier(0.16, 1, 0.3, 1) | Hero headline, value prop, console (`.rise`) |
+| Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, terminal (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
 | Scroll | scroll-driven | linear | Bars draw up as the chart enters (`animation-timeline: view()`, progressive enhancement) |
 
-Rules: only `opacity` and `transform` animate. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
+Rules: only `opacity` and `transform` animate. Layout never changes after first paint: both fonts are preloaded, and the font stacks are pinned in the base layer (see `app.css`) so no stylesheet order can swap them. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
 
 ## 7. Depth & Surface
 

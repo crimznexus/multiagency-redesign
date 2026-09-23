@@ -1,5 +1,6 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import geistMono from '~/assets/fonts/geist-mono-subset.woff2?url'
 import geistLatin from '~/assets/fonts/geist-subset.woff2?url'
 import '~/styles/app.css'
 
@@ -20,8 +21,10 @@ export const Route = createRootRoute({
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [
-      // Geist sets the headline; preloading lets it beat first paint. The mono face is small and can follow.
+      // Both faces are in the first screen (the headline, and the terminal beside it). Preloading
+      // lets them beat first paint, so text never re-wraps when a font swaps in.
       { rel: 'preload', href: geistLatin, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
+      { rel: 'preload', href: geistMono, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
     ],
   }),
