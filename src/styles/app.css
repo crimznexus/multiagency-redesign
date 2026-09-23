@@ -72,6 +72,10 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
+  /* Lenis (use-smooth-scroll) sets the scroll position every frame; CSS smoothing on top would fight it. */
+  html.lenis {
+    scroll-behavior: auto;
+  }
   body {
     @apply bg-bg font-sans text-base text-ink antialiased;
     overflow-x: clip;

@@ -2,6 +2,8 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-r
 import type { ReactNode } from 'react'
 import geistMono from '~/assets/fonts/geist-mono-subset.woff2?url'
 import geistLatin from '~/assets/fonts/geist-subset.woff2?url'
+import { useSmoothScroll } from '~/lib/use-smooth-scroll'
+import 'lenis/dist/lenis.css'
 import '~/styles/app.css'
 
 const title = 'MultiAgency: AI speed, human sign-off, open books'
@@ -32,6 +34,7 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  useSmoothScroll()
   return (
     <RootDocument>
       <Outlet />

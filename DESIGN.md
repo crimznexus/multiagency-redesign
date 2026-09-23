@@ -171,6 +171,8 @@ Shape rule (one documented system): **nothing is rounded**, except the header. E
 | Entrance | 500ms fade, staggered by 80ms | `--ease-ui` | Hero headline, value prop, pipeline graph (`.rise`). Opacity only: nothing moves on load, so a reload never reads as a layout jump |
 | Scroll | scroll-driven | linear | Bars draw up as the chart enters (`animation-timeline: view()`, progressive enhancement) |
 
+**Smooth scrolling (client request):** Lenis (`src/lib/use-smooth-scroll.ts`, lerp 0.085) eases wheel and trackpad scrolling site-wide; touch keeps the phone's native momentum. The page still scrolls natively underneath, so the sticky header, the hero's scroll timeline and the observers are unaffected; same-page links glide and respect scroll margins. `html.lenis` turns CSS `scroll-behavior` off so the two never fight. Off under reduced motion.
+
 Rules: only `opacity` and `transform` animate. Layout never changes after first paint: both fonts are preloaded, and the font stacks are pinned in the base layer (see `app.css`) so no stylesheet order can swap them. Selection is a fill or an underline, never a coloured side border. `prefers-reduced-motion: reduce` disables all of it.
 
 ## 7. Depth & Surface
